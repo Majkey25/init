@@ -1,0 +1,286 @@
+# Projects shown on the site. Order in this file is the order inside each group on /work/.
+# featured: order + area put a project on the home page as a case row (problem / approach / result).
+# as_of dates the result, because versions and numbers change.
+
+- name: CzechCore
+  group: ai
+  kind: Offline Czech grammar correction
+  stack: [Python, PyTorch, CTranslate2, UDPipe]
+  featured: { order: 1, area: AI and language }
+  problem: Correct Czech grammar on the device, with exact edit ranges an editor can underline, without sending text anywhere.
+  approach: A 60.8M-parameter Czech correction model from ÚFAL reads the whole sentence, UDPipe provides exact token ranges, and deterministic guards protect URLs, numbers, dates and code. A separate local-LLM rewrite mode always asks for human review. The source includes an Android keyboard and a Windows TSF adapter.
+  specimen: { before: Muži přišly domů., after: Muži přišli domů. }
+  result: F0.5 of 0.634 (precision 0.788, recall 0.355) on the GECCC development split of 8,478 sentences, at about 229 ms per sentence on CPU. Released as a research alpha, because it still changes 558 of 3,288 correct sentences, too many for silent autocorrect.
+  as_of: Sep 2026
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/CzechCore' }
+
+- name: Music Analyzer
+  group: ai
+  kind: Separates songs into stems, with tools for listening and editing
+  stack: [Python]
+  links:
+    - { label: Repository, href: 'https://github.com/StudentTraineeCenter/music-analyzer' }
+
+- name: Transcriber
+  group: ai
+  kind: Android M4A transcription with local and cloud models
+  stack: [Kotlin, sherpa-onnx, Whisper]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/transcriber-android' }
+
+- name: Local Voice
+  group: ai
+  kind: Local-first Android dictation, semantic editing and offline TTS
+  stack: [Kotlin, Whisper]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/local-voice-android' }
+
+- name: Prompt engineering skill
+  group: ai
+  kind: Turns tasks into verified prompts and agent rules for Claude Code, Codex and ChatGPT
+  stack: [Python, Markdown]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/prompt-engineering-skill' }
+
+- name: Project-Guard
+  group: tools
+  kind: GitHub project audit
+  stack: [Python, Streamlit, LLM tool calling]
+  featured: { order: 2, area: AI and language }
+  problem: '"Which items are missing the fields or links my team expects?" asked across issues, pull requests and Project V2 boards.'
+  approach: A local Streamlit app and HTTP API check issues, pull requests and branches against rules you configure. An optional LLM assistant with tool calling explains the gaps and prepares field values you review before they apply.
+  result: Runs entirely on your machine, without telemetry, and exports a self-contained offline HTML report. CI enforces Pyright strict, Ruff and pytest. The same audit engine now runs inside Project board.
+  as_of: Jul 2026
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/Project-Guard' }
+
+- name: GitHub issues and PR export
+  group: tools
+  kind: Exports issues and pull requests with comments and images to deterministic Markdown
+  stack: [Python, Playwright]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/gh-issues-pr-export' }
+
+- name: ByteNoise
+  group: tools
+  kind: Tiny reversible text obfuscator with a desktop and web UI
+  stack: [Python, Tkinter]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/ByteNoise' }
+
+- name: Project board
+  group: web
+  kind: Separates project phases from deployed versions
+  stack: [React 19, TypeScript, Cloudflare Workers, D1]
+  featured: { order: 3, area: Backend and web }
+  source: private
+  problem: A kanban card can say "testing", but it cannot say that 1.4 is in testing while 1.3 runs in production.
+  approach: Projects move through custom columns while their target, test and production versions are tracked separately. Board content is encrypted with AES-256-GCM, sign-in uses a GitHub App with OAuth PKCE, and agents get scoped, expiring API tokens that never exceed their creator's permissions.
+  result: Live, with private source. A public workflow checks the app daily for health, security headers and a 401 on anonymous board access, and anyone can repeat the check with curl.
+  as_of: Sep 2026
+  links:
+    - { label: Live app, href: 'https://project-board.majkeylab.workers.dev' }
+    - { label: Showcase, href: 'https://github.com/Majkey25/project-board-showcase' }
+
+- name: RC Audio Lab
+  group: web
+  kind: An RC filter you can hear
+  stack: [TypeScript, React 19, Web Audio, Vite]
+  featured: { order: 4, area: Backend and web }
+  problem: A credit project for Tomas Bata University in Zlín, to make capacitor charging and first-order filters something you can see and hear.
+  approach: The filter runs in an AudioWorklet with bilinear-transform coefficients prewarped at the cutoff. The equations update with the substituted values, and you can switch A/B on a recorded guitar riff.
+  result: Playwright tests in Chromium and Firefox render the production audio processor offline and compare the measured amplitude and phase with the maths; the default high-pass must cut the test recording by more than 20 dB.
+  as_of: Sep 2026
+  links:
+    - { label: Open the lab, href: 'https://majkey25.github.io/rc-audio-lab/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/rc-audio-lab' }
+
+- name: Band websites
+  group: web
+  kind: Exhalace and WeTheGods
+  stack: [Astro 7, Pages CMS, GitHub Actions]
+  featured: { order: 5, area: Backend and web }
+  problem: Two bands needed sites their members can update themselves, with no server to look after.
+  approach: Static Astro sites on GitHub Pages. Concerts, releases and line-ups live in YAML, edited through Pages CMS and validated at build time, so a broken edit never goes live. Each concert gets its own page and calendar file.
+  result: Every pull request runs a format check, type check, build and Lighthouse CI, and a nightly rebuild moves past shows to the archive.
+  as_of: Sep 2026
+  links:
+    - { label: exhalace.cz, href: 'https://www.exhalace.cz/' }
+    - { label: WeTheGods, href: 'https://majkey25.github.io/WeTheGods/' }
+
+- name: Media Downloader
+  group: web
+  kind: Downloads one audio or video file from a public URL, with a hardened backend
+  stack: [Python, Flask, FFmpeg]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/youtube_downloader' }
+
+- name: DownloadGithubDir
+  group: web
+  kind: Downloads a GitHub repository folder as a ZIP, entirely in the browser
+  stack: [JavaScript, JSZip]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/DownloadGithubDir/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/DownloadGithubDir' }
+
+- name: art_by_justyna
+  group: web
+  kind: Website for an artist
+  stack: [HTML, CSS]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/art_by_justyna/' }
+
+- name: SeliaScan
+  formerly: ScanIt
+  group: android
+  kind: Scan, save, share
+  stack: [Kotlin, Jetpack Compose, ML Kit]
+  featured: { order: 6, area: Android apps }
+  problem: Scanning a document on Android should not need an account, ads or a file manager.
+  approach: Google's ML Kit document scanner handles capture. On-device OCR, redaction burned into a protected revision, reusable signatures and stamps, and orientation fixes applied only when the angle of the text lines gives reliable evidence.
+  result: Version 1.8.2 for Android 10 and newer, MIT-licensed on GitHub with every feature unlocked, no Internet permission of its own, five interface languages.
+  as_of: Sep 2026
+  links:
+    - { label: Project page, href: 'https://majkey25.github.io/ScanIt/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/ScanIt' }
+
+- name: Selia Weather
+  group: android
+  kind: A forecast that names its sources
+  stack: [Kotlin, Jetpack Compose]
+  featured: { order: 7, area: Android apps }
+  problem: Weather models disagree and a single forecast hides it. Czech users also expect ČHMÚ data.
+  approach: The app requests several model families and computes a robust median on the device when at least three values exist. It adds ČHMÚ ALADIN for Czech locations, observed radar, DWD ICON maps and a five-year NASA POWER archive, and the details screen lists which models contributed.
+  result: In a 313-case temperature replay the median had a lower pooled error than Open-Meteo Best Match. The report keeps the station-level failures, and the app makes no claim of superior accuracy.
+  as_of: Sep 2026
+  links:
+    - { label: Project page, href: 'https://majkey25.github.io/Selia-Weather/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/Selia-Weather' }
+
+- name: Intoniva
+  formerly: TuneItAll
+  group: android
+  kind: Offline instrument tuner
+  stack: [Kotlin, Jetpack Compose, audio DSP]
+  featured: { order: 8, area: Android apps }
+  problem: A tuner should open on the tuner, without an account, ads or network.
+  approach: Auto, manual and chromatic modes, presets for guitars, basses, ukulele and the violin family, an adjustable A4 reference, on-device tempo detection and chord analysis of local audio files. Feedback rejection stops the in-tune chime from re-triggering detection.
+  result: Free on Google Play with every feature included and no network permission at all.
+  as_of: Sep 2026
+  links:
+    - {
+        label: Google Play,
+        href: 'https://play.google.com/store/apps/details?id=com.tuneitall.tuner',
+      }
+    - { label: Repository, href: 'https://github.com/Majkey25/TuneItAll' }
+
+- name: SeliaSheets
+  group: android
+  kind: Private, offline-first study notebooks for phones and tablets
+  stack: [Kotlin, Jetpack Compose, AndroidX Ink]
+  links:
+    - { label: Project page, href: 'https://majkey25.github.io/SeliaSheets/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/SeliaSheets' }
+
+- name: Selia Cycles
+  group: android
+  kind: Private offline period tracker
+  stack: [Kotlin, Jetpack Compose]
+  links:
+    - { label: Project page, href: 'https://majkey25.github.io/SeliaCycles/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/SeliaCycles' }
+
+- name: SeliaLists
+  formerly: SheetSet
+  group: android
+  kind: Offline PDF organizer and setlist reader for musicians
+  stack: [Kotlin, Jetpack Compose]
+  links:
+    - { label: Project page, href: 'https://majkey25.github.io/SheetSet/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/SheetSet' }
+
+- name: QR Code Scanner & Creator
+  group: android
+  kind: Private QR scanner and styled creator
+  stack: [Kotlin, CameraX, ZXing]
+  links:
+    - { label: Project page, href: 'https://majkey25.github.io/QR-Code-Scanner-Creator/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/QR-Code-Scanner-Creator' }
+
+- name: Location Mock
+  group: android
+  kind: Minimal mock-location control with no tracking
+  stack: [Kotlin]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/Location-Mock' }
+
+- name: scrollit
+  group: android
+  kind: Floating auto-scroll utility
+  stack: [Kotlin, Shizuku]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/scrollit' }
+
+- name: Tab equalizer
+  group: extensions
+  kind: Per-tab audio equalizer for Chrome, Chromium and Brave
+  stack: [JavaScript, Web Audio, MV3]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/chromium-tab-equalizer' }
+
+- name: No Cookies Ads
+  group: extensions
+  kind: Blocks ads, trackers, third-party cookies and cookie banners
+  stack: [JavaScript, MV3, AdGuard rules]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/no-cookies-ads' }
+
+- name: YouTube skipper
+  group: extensions
+  kind: Skips SponsorBlock community-reported segments
+  stack: [JavaScript, MV3]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/youtube-skipper' }
+
+- name: Songsterr auto continue
+  group: extensions
+  kind: Clicks Songsterr's free "continue with sync pauses" action
+  stack: [JavaScript, MV3, Playwright]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/songsterr-auto-continue' }
+
+- name: Tab copy
+  group: extensions
+  kind: Copies the URLs of selected tabs in order
+  stack: [JavaScript, MV3]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/tab-copy-extension' }
+
+- name: Unit calculator
+  group: earlier
+  kind: Pace, temperature and weight conversions
+  stack: [HTML, JavaScript]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/calculator/' }
+
+- name: Buffon's needle
+  group: earlier
+  kind: Monte Carlo simulation of Buffon's needle
+  stack: [JavaScript, Chart.js]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/buffoncalc/' }
+
+- name: QR code generator
+  group: earlier
+  kind: Static QR code generator
+  stack: [JavaScript]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/qrcode_generator/' }
+
+- name: Wheel
+  group: earlier
+  kind: Spin-the-wheel decision helper
+  stack: [HTML, JavaScript]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/wheel/' }

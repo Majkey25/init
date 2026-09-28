@@ -1,0 +1,180 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { groups, href } from '../site';
+
+const projects = (await getCollection('projects')).map((e) => e.data);
+const sections = (Object.keys(groups) as (keyof typeof groups)[])
+  .map((key) => ({ key, title: groups[key], list: projects.filter((p) => p.group === key) }))
+  .filter((s) => s.list.length > 0);
+---
+
+<Base
+  title="All projects"
+  description="Every public project by Matěj Teplý, grouped: AI and language, developer tools, web, Android apps and browser extensions."
+  current="work"
+>
+  <section class="head wrap" aria-labelledby="work-title">
+    <p class="label">
+      <a href={href()}>Matěj Teplý</a> / Work
+    </p>
+    <h1 id="work-title" class="display">
+      All projects
+    </h1>
+    <p class="lead muted">
+      Everything public, grouped by what it is. Private sources are marked. The home page tells
+      <a href={href('#work')}>eight of them in depth</a>.
+    </p>
+    <nav aria-label="Groups">
+      <ul class="link-list">
+        {sections.map((s) => (
+          <li>
+            <a href={`#${s.key}`}>{s.title}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </section>
+
+  {sections.map((s) => (
+    <section id={s.key} class="section wrap" aria-labelledby={`${s.key}-title`}>
+      <div class="section__head">
+        <h2 id={`${s.key}-title`} class="h2">
+          {s.title}
+        </h2>
+        <p class="data">{s.list.length} projects</p>
+      </div>
+      <table class="projects">
+        <caption class="sr-only">{s.title}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">What it does</th>
+            <th scope="col">Stack</th>
+            <th scope="col">Links</th>
+          </tr>
+        </thead>
+        <tbody>
+          {s.list.map((p) => (
+            <tr>
+              <th scope="row" data-label="Name">
+                <span class="cell">
+                  <span class="name">{p.name}</span>
+                  {p.formerly && <span class="label">formerly {p.formerly}</span>}
+                  {p.featured && <span class="label">case study on the home page</span>}
+                </span>
+              </th>
+              <td data-label="What it does">{p.kind}</td>
+              <td class="data" data-label="Stack">
+                {p.stack.join(' · ')}
+              </td>
+              <td data-label="Links">
+                <ul class="links">
+                  {p.links.map((l) => (
+                    <li>
+                      <a class="ext" href={l.href} rel="noopener" target="_blank">
+                        {l.label}
+                        <span class="sr-only"> · {p.name}</span>
+                      </a>
+                    </li>
+                  ))}
+                  {p.source === 'private' && <li class="label">source private</li>}
+                </ul>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .head {
+    display: grid;
+    gap: 1rem;
+    padding-block: clamp(3rem, 8vw, 6rem) 0;
+  }
+
+  .projects {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .projects thead th {
+    padding: 0 1rem 0.6rem 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .projects tbody tr {
+    border-top: 1px solid var(--rule);
+    transition: background-color 180ms var(--ease);
+  }
+
+  .projects tbody tr:hover,
+  .projects tbody tr:focus-within {
+    background: var(--surface);
+  }
+
+  .projects th[scope='row'],
+  .projects td {
+    padding: 0.9rem 1rem 0.9rem 0;
+    vertical-align: top;
+  }
+
+  .projects th[scope='row'] {
+    font-weight: 400;
+  }
+
+  .cell {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .name {
+    font: 400 1.2rem/1.25 var(--font-serif);
+  }
+
+  .links {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+  }
+
+  /* Phones: each row becomes a block, the header text moves in front of each cell. */
+  @media (width < 40rem) {
+    .projects thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .projects tbody tr {
+      display: grid;
+      gap: 0.35rem;
+      padding-block: 1rem;
+    }
+
+    .projects th[scope='row'],
+    .projects td {
+      padding: 0;
+    }
+
+    .projects td::before {
+      content: attr(data-label);
+      display: block;
+      font: 600 0.75rem/1.4 var(--font-sans);
+      color: var(--ink-muted);
+    }
+  }
+</style>

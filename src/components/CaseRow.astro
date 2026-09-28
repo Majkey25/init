@@ -1,0 +1,137 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>['data'];
+  index: number;
+}
+
+const { project: p, index } = Astro.props;
+const number = String(index).padStart(2, '0');
+const id = `case-${number}`;
+---
+
+<article class="case" aria-labelledby={id}>
+  <div class="case__meta">
+    <p class="data">{number}</p>
+    <h3 class="h3" id={id}>
+      <a href={p.links[0]?.href} rel="noopener" target="_blank">
+        {p.name}
+      </a>
+    </h3>
+    <p class="muted">{p.kind}</p>
+    {p.formerly && <p class="label">formerly {p.formerly}</p>}
+    <p class="data">{p.stack.join(' · ')}</p>
+  </div>
+  <div class="case__story">
+    <dl>
+      <div>
+        <dt class="label">Problem</dt>
+        <dd>{p.problem}</dd>
+      </div>
+      <div>
+        <dt class="label">Approach</dt>
+        <dd>
+          {p.approach}
+          {p.specimen && (
+            <span class="specimen data" lang="cs">
+              <s>{p.specimen.before}</s> → <span>{p.specimen.after}</span>
+            </span>
+          )}
+        </dd>
+      </div>
+      <div>
+        <dt class="label">Result</dt>
+        <dd>
+          {p.result} <span class="data">(as of {p.as_of})</span>
+        </dd>
+      </div>
+    </dl>
+    <ul class="link-list">
+      {p.links.map((l) => (
+        <li>
+          <a class="ext" href={l.href} rel="noopener" target="_blank">
+            {l.label}
+            <span class="sr-only"> · {p.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</article>
+
+<style>
+  .case {
+    display: grid;
+    gap: 1.25rem 2rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem) clamp(0.75rem, 2vw, 1.25rem);
+    margin-inline: calc(-1 * clamp(0.75rem, 2vw, 1.25rem));
+    border-top: 1px solid var(--rule);
+    transition: background-color 180ms var(--ease);
+  }
+
+  .case:hover,
+  .case:focus-within {
+    background: var(--surface);
+  }
+
+  @media (width >= 64rem) {
+    .case {
+      grid-template-columns: 4fr 8fr;
+    }
+  }
+
+  .case__meta {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+  }
+
+  .case__meta h3 a {
+    text-decoration-color: var(--rule-strong);
+  }
+
+  .case__story {
+    display: grid;
+    gap: 1rem;
+  }
+
+  dl {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  dl > div {
+    display: grid;
+    gap: 0.15rem 1.5rem;
+  }
+
+  @media (width >= 48rem) {
+    dl > div {
+      grid-template-columns: 6.5rem 1fr;
+    }
+
+    dt {
+      padding-top: 0.2em;
+    }
+  }
+
+  dd {
+    max-width: 44rem;
+    text-wrap: pretty;
+  }
+
+  .specimen {
+    display: block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-left: 2px solid var(--rule-strong);
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .case:hover .specimen,
+  .case:focus-within .specimen {
+    background: var(--paper);
+  }
+</style>
