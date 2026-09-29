@@ -10,8 +10,9 @@ Personal site of Matěj Teplý (Majkey), AI/ML engineer and backend developer:
 ## What is here
 
 - **Home**: a statement, eight selected projects written as problem → approach → result (with
-  the measured numbers and known limits), how I work, experience and education, music, contact.
-- **[/work/](https://majkey25.github.io/init/work/)**: every public project, grouped.
+  measured numbers and known limits where I have them), how I work, experience and education,
+  music, contact.
+- **[/work/](https://majkey25.github.io/init/work/)**: public projects, grouped.
 - Light and dark theme (follows the system, remembers a manual choice), cross-document view
   transitions, a print stylesheet for a clean paper copy.
 

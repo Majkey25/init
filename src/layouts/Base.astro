@@ -17,7 +17,7 @@ const pageTitle = title
   : 'Matěj Teplý: AI/ML engineer and backend developer';
 const pageDescription =
   description ??
-  'Matěj Teplý builds agentic RAG chatbots and AI agents in Python, plus private, offline-first Android apps and web tools. Projects with measured results.';
+  'Matěj Teplý builds agentic RAG chatbots and AI agents in Python, plus Android apps, most of them private and offline-first, and web tools. Projects with measured results.';
 const nav = [
   { href: href('#work'), label: 'Work' },
   { href: href('#about'), label: 'About' },
@@ -34,9 +34,9 @@ const person = {
   name: 'Matěj Teplý',
   alternateName: 'Majkey',
   url: url(href()),
-  jobTitle: 'AI/ML engineer and backend developer',
+  jobTitle: 'Fullstack AI developer',
   worksFor: { '@type': 'Organization', name: 'OKsystem' },
-  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Tomas Bata University in Zlín' },
+  affiliation: { '@type': 'CollegeOrUniversity', name: 'Tomas Bata University in Zlín' },
   email: `mailto:${profile.email}`,
   sameAs: profile.socials.map((s) => s.href),
 };
