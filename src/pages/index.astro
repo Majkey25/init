@@ -1,0 +1,489 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CaseRow from '../components/CaseRow.astro';
+import { href, profile } from '../site';
+
+const projects = (await getCollection('projects')).map((e) => e.data);
+const featured = projects
+  .filter((p) => p.featured)
+  .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
+const areas = ['AI and language', 'Backend and web', 'Android apps'] as const;
+const byName = (name: string) => projects.find((p) => p.name === name)?.links[0]?.href;
+
+const experience = [
+  {
+    when: 'Jun 2025 – now',
+    from: '2025-06',
+    role: 'Fullstack AI Developer (Junior/Mid)',
+    org: 'OKsystem',
+    note: 'AI-enabled applications across backend, frontend, APIs, databases, performance and architecture.',
+  },
+  {
+    when: 'May 2026 – now',
+    from: '2026-05',
+    role: 'AI Safety & Red Teaming Researcher',
+    org: 'Freelance',
+    note: 'Independent safety evaluation and responsible vulnerability research on advanced generative AI systems.',
+  },
+  {
+    when: 'Jan 2023 – Jun 2025',
+    from: '2023-01',
+    role: 'Student Azure Programming',
+    org: 'Student Trainee Center',
+    note: 'Hands-on product, cloud and AI work, finished with Music Analyzer, which separates songs into stems.',
+  },
+];
+const education = [
+  {
+    when: '2025 – 2030',
+    from: '2025',
+    what: 'BSc Computer Software Engineering',
+    where: 'Tomas Bata University in Zlín',
+  },
+  {
+    when: '2021 – 2025',
+    from: '2021',
+    what: 'Mechanical Engineering',
+    where: 'Střední průmyslová škola Zlín',
+  },
+];
+const skills = [
+  {
+    area: 'AI systems',
+    list: 'Agentic RAG, AI agents, context engineering, LLMs, chatbots, AI safety',
+  },
+  { area: 'Backend', list: 'Python, APIs, databases, automation, cloud' },
+  { area: 'Product', list: 'TypeScript, JavaScript, Kotlin, HTML/CSS, C#, Git' },
+];
+---
+
+<Base>
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <p class="label">Matěj Teplý (Majkey) · AI/ML engineer and backend developer</p>
+    <h1 id="hero-title" class="display">
+      I build software that <em>shows its work.</em>
+    </h1>
+    <div class="hero__grid">
+      <div class="hero__intro">
+        <p class="lead">
+          I’m an AI developer at OKsystem, based in the Zlín area of Czechia. At work I build
+          agentic RAG chatbots and AI agents in Python. Outside it I ship Android apps, most of them
+          private and offline-first, plus browser extensions and web tools, usually with the tests,
+          measurements and known limits written next to the code.
+        </p>
+        <ul class="link-list">
+          <li>
+            <a href="#work">Selected work ↓</a>
+          </li>
+          <li>
+            <a class="ext" href={profile.socials[0].href} rel="noopener me" target="_blank">
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a class="ext" href={profile.socials[1].href} rel="noopener me" target="_blank">
+              LinkedIn
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          </li>
+        </ul>
+      </div>
+      <dl class="facts">
+        <div>
+          <dt class="label">Now</dt>
+          <dd>Fullstack AI developer, OKsystem</dd>
+        </div>
+        <div>
+          <dt class="label">Also</dt>
+          <dd>AI safety and red-teaming research</dd>
+        </div>
+        <div>
+          <dt class="label">Studying</dt>
+          <dd>Software engineering, Tomas Bata University in Zlín</dd>
+        </div>
+        <div>
+          <dt class="label">Playing</dt>
+          <dd>Bass in WeTheGods</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="work" class="section wrap" aria-labelledby="work-title">
+    <div class="section__head">
+      <p class="label">Selected work</p>
+      <div class="section__intro">
+        <h2 id="work-title" class="h2">
+          Eight projects, told as problem, approach and result.
+        </h2>
+        <p class="muted">
+          The result is what I measured or shipped; where a measurement found a failure, it stays
+          in.
+        </p>
+      </div>
+    </div>
+    {areas.map((area) => (
+      <div class="area">
+        <h3 class="label area__title">{area}</h3>
+        {featured
+          .filter((p) => p.featured?.area === area)
+          .map((p) => (
+            <CaseRow project={p} index={p.featured?.order ?? 0} />
+          ))}
+      </div>
+    ))}
+    <a class="all" href={href('work/')}>
+      <span class="h3">All {projects.length} projects, grouped</span>
+      <span class="data">AI · tools · web · Android · extensions →</span>
+    </a>
+  </section>
+
+  <section id="how" class="section wrap" aria-labelledby="how-title">
+    <div class="section__head">
+      <p class="label">How I work</p>
+      <h2 id="how-title" class="h2">
+        Three habits that show up across my repositories.
+      </h2>
+    </div>
+    <ol class="habits">
+      <li>
+        <h3 class="h3">Measure, then claim.</h3>
+        <p class="muted">
+          <a href={byName('CzechCore')} rel="noopener" target="_blank">
+            CzechCore
+          </a>{' '}
+          publishes its precision, recall and rejected experiments.{' '}
+          <a href={byName('Selia Weather')} rel="noopener" target="_blank">
+            Selia Weather
+          </a>{' '}
+          publishes its replay together with the failures.
+        </p>
+      </li>
+      <li>
+        <h3 class="h3">Private by default.</h3>
+        <p class="muted">
+          The GitHub editions of SeliaScan, Intoniva, SeliaLists and Selia Cycles ask for no network
+          access of their own, and your data stays on the device unless you choose to export, share
+          or sync it.
+        </p>
+      </li>
+      <li>
+        <h3 class="h3">One job per tool.</h3>
+        <p class="muted">
+          A per-tab equalizer, a SponsorBlock skipper, a tab-URL copier: small{' '}
+          <a href={href('work/#extensions')}>browser extensions</a> that each do one thing.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="about" class="section wrap" aria-labelledby="about-title">
+    <div class="section__head">
+      <p class="label">About</p>
+      <h2 id="about-title" class="h2">
+        Experience and education
+      </h2>
+    </div>
+    <div class="about">
+      <ol class="timeline">
+        {experience.map((e) => (
+          <li>
+            <time class="data" datetime={e.from}>
+              {e.when}
+            </time>
+            <div>
+              <h3 class="timeline__role">{e.role}</h3>
+              <p class="muted">{e.org}</p>
+              <p>{e.note}</p>
+            </div>
+          </li>
+        ))}
+        {education.map((e) => (
+          <li>
+            <time class="data" datetime={e.from}>
+              {e.when}
+            </time>
+            <div>
+              <h3 class="timeline__role">{e.what}</h3>
+              <p class="muted">{e.where}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <dl class="skills">
+        {skills.map((s) => (
+          <div>
+            <dt class="label">{s.area}</dt>
+            <dd>{s.list}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section id="music" class="section wrap" aria-labelledby="music-title">
+    <div class="section__head">
+      <p class="label">Music</p>
+      <h2 id="music-title" class="h2">
+        Louder, but built the same way.
+      </h2>
+    </div>
+    <div class="prose music">
+      <p>
+        I play bass and sing backing vocals in WeTheGods, an alternative metalcore band from Uherské
+        Hradiště, and I also play guitar, drums and saxophone. From 2025 to 2026 I played guitar in
+        the rock band Exhalace. I built both bands’ websites and a tuner app, and I collect vinyl
+        records.
+      </p>
+      <ul class="link-list">
+        <li>
+          <a
+            class="ext"
+            href="https://majkey25.github.io/WeTheGods/"
+            rel="noopener"
+            target="_blank"
+          >
+            WeTheGods
+          </a>
+        </li>
+        <li>
+          <a
+            class="ext"
+            href="https://open.spotify.com/artist/0t37G5AusfBBeHTv85jxj9"
+            rel="noopener"
+            target="_blank"
+          >
+            Spotify
+          </a>
+        </li>
+        <li>
+          <a class="ext" href="https://www.exhalace.cz/" rel="noopener" target="_blank">
+            Exhalace
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="contact" class="section wrap" aria-labelledby="contact-title">
+    <div class="section__head">
+      <p class="label">Contact</p>
+      <h2 id="contact-title" class="h2">
+        Write to me.
+      </h2>
+    </div>
+    <div class="contact">
+      <p class="lead">For work, collaboration or a good technical problem.</p>
+      <p class="contact__mail">
+        <a class="display contact__address" href={`mailto:${profile.email}`}>
+          {profile.email}
+        </a>
+        <button class="copy no-print" type="button" data-copy={profile.email} hidden>
+          Copy address
+        </button>
+        <span class="copy__status data" role="status" aria-live="polite"></span>
+      </p>
+      <ul class="link-list">
+        {profile.socials.slice(0, 2).map((s) => (
+          <li>
+            <a class="ext" href={s.href} rel="noopener me" target="_blank">
+              {s.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Copy the e-mail address; the mailto link stays for everyone without clipboard access.
+  const button = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const status = document.querySelector('.copy__status');
+  if (button && status && navigator.clipboard) {
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+        status.textContent = 'Copied';
+        setTimeout(() => (status.textContent = ''), 2000);
+      } catch {
+        status.textContent = 'Copy blocked, use the link';
+      }
+    });
+  }
+</script>
+
+<style>
+  .hero {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    padding-block: clamp(3.5rem, 9vw, 7rem) 0;
+  }
+
+  .hero .display {
+    max-width: 16ch;
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: clamp(0.5rem, 2vw, 1.5rem);
+  }
+
+  @media (width >= 64rem) {
+    .hero__grid {
+      grid-template-columns: 7fr 5fr;
+      column-gap: 4rem;
+      align-items: start;
+    }
+  }
+
+  .hero__intro {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .facts {
+    display: grid;
+    border-top: 1px solid var(--rule);
+  }
+
+  .facts > div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 1rem;
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section__intro {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .area + .area {
+    margin-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .area__title {
+    margin-bottom: 0.75rem;
+  }
+
+  .all {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding-block: 1.5rem;
+    border-block: 1px solid var(--ink);
+    text-decoration: none;
+    transition: background-color 180ms var(--ease);
+  }
+
+  .all:hover {
+    background: var(--surface);
+  }
+
+  .all:hover .h3 {
+    text-decoration: underline 1px var(--accent);
+    text-underline-offset: 0.2em;
+  }
+
+  .habits {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (width >= 48rem) {
+    .habits {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .habits li {
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+  }
+
+  .about {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (width >= 64rem) {
+    .about {
+      grid-template-columns: 8fr 4fr;
+      column-gap: 4rem;
+    }
+  }
+
+  .timeline {
+    display: grid;
+  }
+
+  .timeline li {
+    display: grid;
+    gap: 0.25rem 2rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (width >= 48rem) {
+    .timeline li {
+      grid-template-columns: 11rem 1fr;
+    }
+  }
+
+  .timeline__role {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .skills {
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+  }
+
+  .skills div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .contact {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .contact__mail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .contact__address {
+    font-size: clamp(1.75rem, 1rem + 3.4vw, 3.5rem);
+    overflow-wrap: anywhere;
+  }
+
+  .copy {
+    min-height: 2.75rem;
+    padding: 0.35rem 1rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    background: none;
+    font-size: 0.9375rem;
+  }
+
+  .copy:hover {
+    border-color: var(--accent);
+  }
+</style>

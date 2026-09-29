@@ -1,0 +1,301 @@
+/* A quiet technical journal: paper, ink, one accent that only marks what you can click. */
+
+:root {
+  --paper: #f7f6f2;
+  --surface: #eeece6;
+  --ink: #15171c;
+  --ink-muted: #585c66;
+  --accent: #2b45d4;
+  --rule: #d8d6cf;
+  --rule-strong: #7c8088;
+
+  --margin: clamp(1.25rem, 5vw, 4rem);
+  --max: 75rem;
+  --section: clamp(6rem, 12vw, 11rem);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --paper: #111215;
+  --surface: #1a1b1f;
+  --ink: #eceae4;
+  --ink-muted: #9b9ea6;
+  --accent: #9aabff;
+  --rule: #2b2d33;
+  --rule-strong: #5f636c;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (width >= 64rem) {
+  body {
+    font-size: 1.125rem;
+  }
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline 1px var(--rule-strong);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 120ms var(--ease);
+}
+
+a:hover {
+  text-decoration-color: var(--accent);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: var(--paper);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip:focus-visible {
+  transform: none;
+}
+
+.wrap {
+  width: min(100%, calc(var(--max) + 2 * var(--margin)));
+  margin-inline: auto;
+  padding-inline: var(--margin);
+}
+
+/* ---------- Type ---------- */
+
+.display {
+  font: 300 clamp(2.5rem, 1.5rem + 4.6vw, 5.25rem) / 1.04 var(--font-serif);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.display em {
+  font-weight: 400;
+  font-style: italic;
+}
+
+.h2 {
+  font: 400 clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem) / 1.15 var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+.h3 {
+  font: 400 clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem) / 1.2 var(--font-serif);
+}
+
+.lead {
+  max-width: 38rem;
+  font-size: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem);
+  line-height: 1.5;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink-muted);
+}
+
+.data {
+  font: 400 0.875rem/1.45 var(--font-mono);
+  color: var(--ink-muted);
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.prose {
+  display: grid;
+  gap: 1em;
+  max-width: 40rem;
+  text-wrap: pretty;
+}
+
+/* ---------- Sections: a rule draws in from the left as the section arrives ---------- */
+
+.section {
+  padding-block: var(--section) 0;
+}
+
+.section__head {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.section__head::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--ink);
+  transform-origin: left;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .section__head::before {
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 60%;
+    }
+  }
+}
+
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (width >= 64rem) {
+  .section__head {
+    grid-template-columns: 4fr 8fr;
+    column-gap: 2rem;
+    align-items: baseline;
+  }
+}
+
+/* External links carry a small arrow; the text says where they go. */
+.ext::after {
+  content: ' ↗';
+  display: inline-block;
+  transition: transform 180ms var(--ease);
+}
+
+a.ext:hover::after {
+  transform: translate(2px, -2px);
+}
+
+.link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+}
+
+.link-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+/* ---------- Page transitions: a short crossfade, the header stays ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  :root,
+  :root[data-theme='dark'] {
+    --paper: #fff;
+    --ink: #000;
+    --ink-muted: #333;
+    --rule: #ccc;
+    color-scheme: light;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .section {
+    padding-top: 2rem;
+  }
+
+  .ext::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.8em;
+  }
+}

@@ -1,0 +1,247 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { href, profile } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const { title, description, noindex = false } = Astro.props;
+const site = Astro.site ?? new URL('https://majkey25.github.io');
+const url = (path: string) => new URL(path, site).href;
+const pageTitle = title
+  ? `${title} · Matěj Teplý`
+  : 'Matěj Teplý: AI/ML engineer and backend developer';
+const pageDescription =
+  description ??
+  'Matěj Teplý builds agentic RAG chatbots and AI agents in Python, plus Android apps, most of them private and offline-first, and web tools. Projects with measured results.';
+const nav = [
+  { href: href('#work'), label: 'Work' },
+  { href: href('#about'), label: 'About' },
+  { href: href('#music'), label: 'Music' },
+  { href: href('#contact'), label: 'Contact' },
+];
+// Prerender a page when the visitor hovers its link, so navigation feels instant (Chromium).
+const speculation = {
+  prerender: [{ where: { href_matches: href('*') }, eagerness: 'moderate' }],
+};
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Matěj Teplý',
+  alternateName: 'Majkey',
+  url: url(href()),
+  jobTitle: 'Fullstack AI developer',
+  worksFor: { '@type': 'Organization', name: 'OKsystem' },
+  affiliation: { '@type': 'CollegeOrUniversity', name: 'Tomas Bata University in Zlín' },
+  email: `mailto:${profile.email}`,
+  sameAs: profile.socials.map((s) => s.href),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content="#f7f6f2" />
+    <meta name="author" content="Matěj Teplý" />
+    <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
+    <link rel="apple-touch-icon" href={href('apple-touch-icon.png')} />
+    {!noindex && <link rel="canonical" href={url(Astro.url.pathname)} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={url(Astro.url.pathname)} />
+    <meta property="og:image" content={url(href('og.png'))} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <Font
+      cssVariable="--font-serif"
+      preload={[{ subset: 'latin', weight: 300, style: 'normal' }]}
+    />
+    <Font cssVariable="--font-sans" preload={[{ subset: 'latin' }]} />
+    <Font cssVariable="--font-mono" />
+    <script is:inline>
+      (() => {
+        let theme;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#111215');
+      })();
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(person).replace(/</g, '\\u003c')} />
+    <script type="speculationrules" set:html={JSON.stringify(speculation)} />
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+
+    <header class="header wrap no-print">
+      <a class="header__name" href={href()}>
+        Matěj Teplý
+      </a>
+      <nav aria-label="Main">
+        <ul class="header__nav">
+          {nav.map((n) => (
+            <li>
+              <a href={n.href}>{n.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <button class="theme" type="button" aria-pressed="false">
+        Dark
+      </button>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="footer wrap">
+      <ul class="link-list no-print">
+        {profile.socials.map((s) => (
+          <li>
+            <a class="ext" href={s.href} rel="noopener me" target="_blank">
+              {s.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="muted">
+        © {new Date().getFullYear()} Matěj Teplý. Set in Spectral and Hanken Grotesk, with IBM Plex
+        Mono for data. Built with Astro, hosted on GitHub Pages.
+        <a class="ext" href="https://github.com/Majkey25/init" rel="noopener" target="_blank">
+          Source
+        </a>
+      </p>
+    </footer>
+
+    <script>
+      // Theme switch: stored choice, crossfade where view transitions exist.
+      const root = document.documentElement;
+      const button = document.querySelector<HTMLButtonElement>('.theme');
+      const meta = document.querySelector('meta[name="theme-color"]');
+      const set = (theme: string) => {
+        root.dataset.theme = theme;
+        meta?.setAttribute('content', theme === 'dark' ? '#111215' : '#f7f6f2');
+        button?.setAttribute('aria-pressed', String(theme === 'dark'));
+      };
+      set(root.dataset.theme ?? 'light');
+      // A page restored by Back/Forward keeps the theme it was left with; apply a newer choice.
+      addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        try {
+          const saved = localStorage.getItem('theme');
+          if (saved === 'light' || saved === 'dark') set(saved);
+        } catch {
+          // Storage blocked: nothing newer to apply.
+        }
+      });
+      button?.addEventListener('click', () => {
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        const apply = () => {
+          set(next);
+          try {
+            localStorage.setItem('theme', next);
+          } catch {
+            // Storage blocked: the choice lasts for this page only.
+          }
+        };
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (document.startViewTransition && !reduced) document.startViewTransition(apply);
+        else apply();
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--rule);
+    view-transition-name: header;
+  }
+
+  .header__name {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-right: auto;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .header__nav {
+    display: flex;
+    gap: 0.25rem 1.25rem;
+  }
+
+  .header__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    text-decoration-color: transparent;
+  }
+
+  .header__nav a:hover {
+    text-decoration-color: var(--accent);
+  }
+
+  .theme {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    background: none;
+    font-size: 0.9375rem;
+    transition:
+      background-color 180ms var(--ease),
+      color 180ms var(--ease);
+  }
+
+  .theme[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Phones: name on its own line, links and switch share the next one. */
+  @media (width < 36rem) {
+    .header__name {
+      flex-basis: 100%;
+    }
+
+    .header__nav {
+      margin-right: auto;
+      gap: 0.25rem 1rem;
+    }
+  }
+
+  .footer {
+    display: grid;
+    gap: 1rem;
+    margin-top: var(--section);
+    padding-block: 2rem 3rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.9375rem;
+  }
+</style>
