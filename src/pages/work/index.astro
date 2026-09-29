@@ -1,0 +1,122 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { groups, href, slug } from '../../site';
+
+const projects = (await getCollection('projects')).map((e) => e.data);
+const sections = (Object.keys(groups) as (keyof typeof groups)[])
+  .map((key) => ({ key, title: groups[key], list: projects.filter((p) => p.group === key) }))
+  .filter((s) => s.list.length > 0);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base
+  title="All projects"
+  description="Public projects by Matěj Teplý, grouped: AI and language, developer tools, web, Android apps and browser extensions."
+>
+  <section class="head wrap" aria-labelledby="work-title">
+    <p class="mono muted" data-enter style="--i: 0">
+      <a href={href()}>~</a> / work
+    </p>
+    <h1 id="work-title" class="title" data-enter style="--i: 1">
+      All projects <span class="muted">({projects.length})</span>
+    </h1>
+    <p class="lead" data-enter style="--i: 2">
+      Public projects, grouped by what they are. Private sources are marked. Eight of them have a
+      <a href={href('#work')}>full case study</a>.
+    </p>
+    <nav aria-label="Groups" data-enter style="--i: 3">
+      <ul class="inline-list">
+        {sections.map((s) => (
+          <li>
+            <a href={`#${s.key}`}>{s.title}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </section>
+
+  {sections.map((s) => (
+    <section id={s.key} class="section wrap" aria-labelledby={`${s.key}-title`}>
+      <h2 id={`${s.key}-title`} class="label">
+        {s.title} <span class="count">({pad(s.list.length)})</span>
+      </h2>
+      <ul class="rows" data-reveal>
+        {s.list.map((p) => (
+          <li class="project">
+            {p.featured ? (
+              <a class="row" href={href(`work/${slug(p.name)}/`)}>
+                <span class="row__num">↳</span>
+                <span class="row__main">
+                  <span class="row__name" style={`view-transition-name: p-${slug(p.name)}`}>
+                    {p.name}
+                  </span>
+                  <span class="row__kind">{p.kind}</span>
+                </span>
+                <span class="row__meta">case study</span>
+              </a>
+            ) : (
+              <div class="row">
+                <span class="row__num" />
+                <span class="row__main">
+                  <span class="row__name">
+                    {p.name}
+                    {p.formerly && <span class="muted mono"> formerly {p.formerly}</span>}
+                  </span>
+                  <span class="row__kind">{p.kind}</span>
+                  <span class="mono muted">{p.stack.join(' · ')}</span>
+                </span>
+                <span class="row__meta links">
+                  {p.links.map((l) => (
+                    <a class="ext" href={l.href} rel="noopener" target="_blank">
+                      {l.label}
+                      <span class="sr-only"> · {p.name}</span>
+                    </a>
+                  ))}
+                  {p.source === 'private' && <span>source private</span>}
+                </span>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .head {
+    display: grid;
+    gap: 1.1rem;
+    padding-block: clamp(3rem, 10vw, 6rem) 0;
+  }
+
+  .head a {
+    text-decoration: none;
+  }
+
+  .head .lead a {
+    text-decoration: underline;
+  }
+
+  .links {
+    display: grid;
+    justify-items: end;
+    gap: 0.1rem;
+  }
+
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    color: var(--ink);
+  }
+
+  @media (width < 34rem) {
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 1rem;
+    }
+  }
+</style>

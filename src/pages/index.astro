@@ -1,52 +1,58 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import CaseRow from '../components/CaseRow.astro';
-import { href, profile } from '../site';
+import { href, profile, slug } from '../site';
 
 const projects = (await getCollection('projects')).map((e) => e.data);
 const featured = projects
   .filter((p) => p.featured)
   .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
-const areas = ['AI and language', 'Backend and web', 'Android apps'] as const;
-const byName = (name: string) => projects.find((p) => p.name === name)?.links[0]?.href;
+const pad = (n: number) => String(n).padStart(2, '0');
 
+const status = [
+  'Building agentic RAG chatbots and AI agents at OKsystem',
+  'Studying software engineering at Tomas Bata University in Zlín',
+  'Playing bass in WeTheGods',
+];
+const habits = [
+  {
+    title: 'Measure, then claim.',
+    text: 'CzechCore publishes its precision, recall and rejected experiments. Selia Weather publishes its replay together with the failures.',
+  },
+  {
+    title: 'Private by default.',
+    text: 'The GitHub editions of SeliaScan, Intoniva, SeliaLists and Selia Cycles ask for no network access of their own, and your data stays on the device unless you choose to export, share or sync it.',
+  },
+  {
+    title: 'One job per tool.',
+    text: 'A per-tab equalizer, a SponsorBlock skipper, a tab-URL copier: small browser extensions that each do one thing.',
+  },
+];
 const experience = [
   {
-    when: 'Jun 2025 – now',
-    from: '2025-06',
+    when: '2025 – now',
     role: 'Fullstack AI Developer (Junior/Mid)',
     org: 'OKsystem',
     note: 'AI-enabled applications across backend, frontend, APIs, databases, performance and architecture.',
   },
   {
-    when: 'May 2026 – now',
-    from: '2026-05',
+    when: '2026 – now',
     role: 'AI Safety & Red Teaming Researcher',
     org: 'Freelance',
     note: 'Independent safety evaluation and responsible vulnerability research on advanced generative AI systems.',
   },
   {
-    when: 'Jan 2023 – Jun 2025',
-    from: '2023-01',
+    when: '2023 – 2025',
     role: 'Student Azure Programming',
     org: 'Student Trainee Center',
     note: 'Hands-on product, cloud and AI work, finished with Music Analyzer, which separates songs into stems.',
   },
-];
-const education = [
   {
     when: '2025 – 2030',
-    from: '2025',
-    what: 'BSc Computer Software Engineering',
-    where: 'Tomas Bata University in Zlín',
+    role: 'BSc Computer Software Engineering',
+    org: 'Tomas Bata University in Zlín',
   },
-  {
-    when: '2021 – 2025',
-    from: '2021',
-    what: 'Mechanical Engineering',
-    where: 'Střední průmyslová škola Zlín',
-  },
+  { when: '2021 – 2025', role: 'Mechanical Engineering', org: 'Střední průmyslová škola Zlín' },
 ];
 const skills = [
   {
@@ -60,185 +66,130 @@ const skills = [
 
 <Base>
   <section class="hero wrap" aria-labelledby="hero-title">
-    <p class="label">Matěj Teplý (Majkey) · AI/ML engineer and backend developer</p>
-    <h1 id="hero-title" class="display">
-      I build software that <em>shows its work.</em>
+    <p class="mono muted" data-enter style="--i: 0">
+      AI/ML engineer · backend developer · Zlín, CZ
+    </p>
+    <h1 id="hero-title" class="name" data-enter style="--i: 1">
+      <span class="sr-only">Matěj Teplý</span>
+      <span aria-hidden="true" data-scramble>
+        Matěj Teplý
+      </span>
     </h1>
-    <div class="hero__grid">
-      <div class="hero__intro">
-        <p class="lead">
-          I’m an AI developer at OKsystem, based in the Zlín area of Czechia. At work I build
-          agentic RAG chatbots and AI agents in Python. Outside it I ship Android apps, most of them
-          private and offline-first, plus browser extensions and web tools, usually with the tests,
-          measurements and known limits written next to the code.
-        </p>
-        <ul class="link-list">
-          <li>
-            <a href="#work">Selected work ↓</a>
-          </li>
-          <li>
-            <a class="ext" href={profile.socials[0].href} rel="noopener me" target="_blank">
-              GitHub
-            </a>
-          </li>
-          <li>
-            <a class="ext" href={profile.socials[1].href} rel="noopener me" target="_blank">
-              LinkedIn
-            </a>
-          </li>
-          <li>
-            <a href={`mailto:${profile.email}`}>{profile.email}</a>
-          </li>
-        </ul>
-      </div>
-      <dl class="facts">
-        <div>
-          <dt class="label">Now</dt>
-          <dd>Fullstack AI developer, OKsystem</dd>
-        </div>
-        <div>
-          <dt class="label">Also</dt>
-          <dd>AI safety and red-teaming research</dd>
-        </div>
-        <div>
-          <dt class="label">Studying</dt>
-          <dd>Software engineering, Tomas Bata University in Zlín</dd>
-        </div>
-        <div>
-          <dt class="label">Playing</dt>
-          <dd>Bass in WeTheGods</dd>
-        </div>
-      </dl>
-    </div>
+    <p class="statement" data-enter style="--i: 2">
+      I build software that <em>shows its work.</em>
+    </p>
+    <p class="lead" data-enter style="--i: 3">
+      At work I build agentic RAG chatbots and AI agents in Python. Outside it I ship Android apps,
+      most of them private and offline-first, plus browser extensions and web tools, usually with
+      the tests, measurements and known limits written next to the code.
+    </p>
+    <ul class="status mono" data-enter style="--i: 4">
+      {status.map((s) => (
+        <li>{s}</li>
+      ))}
+    </ul>
+    <ul class="inline-list" data-enter style="--i: 5">
+      <li>
+        <a class="ext" href={profile.socials[0].href} rel="noopener me" target="_blank">
+          GitHub
+        </a>
+      </li>
+      <li>
+        <a class="ext" href={profile.socials[1].href} rel="noopener me" target="_blank">
+          LinkedIn
+        </a>
+      </li>
+      <li>
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+      </li>
+    </ul>
   </section>
 
   <section id="work" class="section wrap" aria-labelledby="work-title">
-    <div class="section__head">
-      <p class="label">Selected work</p>
-      <div class="section__intro">
-        <h2 id="work-title" class="h2">
-          Eight projects, told as problem, approach and result.
-        </h2>
-        <p class="muted">
-          The result is what I measured or shipped; where a measurement found a failure, it stays
-          in.
-        </p>
-      </div>
-    </div>
-    {areas.map((area) => (
-      <div class="area">
-        <h3 class="label area__title">{area}</h3>
-        {featured
-          .filter((p) => p.featured?.area === area)
-          .map((p) => (
-            <CaseRow project={p} index={p.featured?.order ?? 0} />
-          ))}
-      </div>
-    ))}
-    <a class="all" href={href('work/')}>
-      <span class="h3">All {projects.length} projects, grouped</span>
-      <span class="data">AI · tools · web · Android · extensions →</span>
-    </a>
+    <h2 id="work-title" class="label">
+      Selected work <span class="count">({pad(featured.length)})</span>
+    </h2>
+    <p class="muted intro">
+      Each one told as problem, approach and result. The result is what I measured or shipped; where
+      a measurement found a failure, it stays in.
+    </p>
+    <ol class="rows" data-reveal>
+      {featured.map((p, i) => (
+        <li>
+          <a class="row" href={href(`work/${slug(p.name)}/`)}>
+            <span class="row__num">{pad(i + 1)}</span>
+            <span class="row__main">
+              <span class="row__name" style={`view-transition-name: p-${slug(p.name)}`}>
+                {p.name}
+              </span>
+              <span class="row__kind">{p.kind}</span>
+            </span>
+            <span class="row__meta">{p.featured?.area}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <p class="more">
+      <a href={href('work/')}>All {projects.length} projects, grouped →</a>
+    </p>
   </section>
 
-  <section id="how" class="section wrap" aria-labelledby="how-title">
-    <div class="section__head">
-      <p class="label">How I work</p>
-      <h2 id="how-title" class="h2">
-        Three habits that show up across my repositories.
-      </h2>
-    </div>
-    <ol class="habits">
-      <li>
-        <h3 class="h3">Measure, then claim.</h3>
-        <p class="muted">
-          <a href={byName('CzechCore')} rel="noopener" target="_blank">
-            CzechCore
-          </a>{' '}
-          publishes its precision, recall and rejected experiments.{' '}
-          <a href={byName('Selia Weather')} rel="noopener" target="_blank">
-            Selia Weather
-          </a>{' '}
-          publishes its replay together with the failures.
-        </p>
-      </li>
-      <li>
-        <h3 class="h3">Private by default.</h3>
-        <p class="muted">
-          The GitHub editions of SeliaScan, Intoniva, SeliaLists and Selia Cycles ask for no network
-          access of their own, and your data stays on the device unless you choose to export, share
-          or sync it.
-        </p>
-      </li>
-      <li>
-        <h3 class="h3">One job per tool.</h3>
-        <p class="muted">
-          A per-tab equalizer, a SponsorBlock skipper, a tab-URL copier: small{' '}
-          <a href={href('work/#extensions')}>browser extensions</a> that each do one thing.
-        </p>
-      </li>
+  <section class="section wrap" aria-labelledby="how-title">
+    <h2 id="how-title" class="label">
+      How I work
+    </h2>
+    <ol class="habits" data-reveal>
+      {habits.map((h, i) => (
+        <li>
+          <span class="row__num">{pad(i + 1)}</span>
+          <div>
+            <h3 class="habit__title">{h.title}</h3>
+            <p class="muted">{h.text}</p>
+          </div>
+        </li>
+      ))}
     </ol>
   </section>
 
   <section id="about" class="section wrap" aria-labelledby="about-title">
-    <div class="section__head">
-      <p class="label">About</p>
-      <h2 id="about-title" class="h2">
-        Experience and education
-      </h2>
-    </div>
-    <div class="about">
-      <ol class="timeline">
-        {experience.map((e) => (
-          <li>
-            <time class="data" datetime={e.from}>
-              {e.when}
-            </time>
-            <div>
-              <h3 class="timeline__role">{e.role}</h3>
-              <p class="muted">{e.org}</p>
-              <p>{e.note}</p>
-            </div>
-          </li>
-        ))}
-        {education.map((e) => (
-          <li>
-            <time class="data" datetime={e.from}>
-              {e.when}
-            </time>
-            <div>
-              <h3 class="timeline__role">{e.what}</h3>
-              <p class="muted">{e.where}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <dl class="skills">
-        {skills.map((s) => (
+    <h2 id="about-title" class="label">
+      Experience and education
+    </h2>
+    <ol class="timeline" data-reveal>
+      {experience.map((e) => (
+        <li>
+          <span class="row__num timeline__when">{e.when}</span>
           <div>
-            <dt class="label">{s.area}</dt>
-            <dd>{s.list}</dd>
+            <h3 class="timeline__role">
+              {e.role} <span class="muted">· {e.org}</span>
+            </h3>
+            {e.note && <p class="muted">{e.note}</p>}
           </div>
-        ))}
-      </dl>
-    </div>
+        </li>
+      ))}
+    </ol>
+    <dl class="skills" data-reveal>
+      {skills.map((s) => (
+        <div>
+          <dt class="mono muted">{s.area}</dt>
+          <dd>{s.list}</dd>
+        </div>
+      ))}
+    </dl>
   </section>
 
   <section id="music" class="section wrap" aria-labelledby="music-title">
-    <div class="section__head">
-      <p class="label">Music</p>
-      <h2 id="music-title" class="h2">
-        Louder, but built the same way.
-      </h2>
-    </div>
-    <div class="prose music">
+    <h2 id="music-title" class="label">
+      Music
+    </h2>
+    <div class="prose" data-reveal>
       <p>
         I play bass and sing backing vocals in WeTheGods, an alternative metalcore band from Uherské
         Hradiště, and I also play guitar, drums and saxophone. From 2025 to 2026 I played guitar in
         the rock band Exhalace. I built both bands’ websites and a tuner app, and I collect vinyl
         records.
       </p>
-      <ul class="link-list">
+      <ul class="inline-list">
         <li>
           <a
             class="ext"
@@ -269,37 +220,59 @@ const skills = [
   </section>
 
   <section id="contact" class="section wrap" aria-labelledby="contact-title">
-    <div class="section__head">
-      <p class="label">Contact</p>
-      <h2 id="contact-title" class="h2">
-        Write to me.
-      </h2>
-    </div>
-    <div class="contact">
-      <p class="lead">For work, collaboration or a good technical problem.</p>
-      <p class="contact__mail">
-        <a class="display contact__address" href={`mailto:${profile.email}`}>
-          {profile.email}
-        </a>
-        <button class="copy no-print" type="button" data-copy={profile.email} hidden>
-          Copy address
-        </button>
-        <span class="copy__status data" role="status" aria-live="polite"></span>
-      </p>
-      <ul class="link-list">
-        {profile.socials.slice(0, 2).map((s) => (
-          <li>
-            <a class="ext" href={s.href} rel="noopener me" target="_blank">
-              {s.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <h2 id="contact-title" class="label">
+      Contact
+    </h2>
+    <p class="statement">For work, collaboration or a good technical problem.</p>
+    <p class="mail">
+      <a class="mail__address" href={`mailto:${profile.email}`}>
+        {profile.email}
+      </a>
+      <button class="copy mono no-print" type="button" data-copy={profile.email} hidden>
+        copy
+      </button>
+      <span class="copy__status mono muted" role="status" aria-live="polite"></span>
+    </p>
   </section>
 </Base>
 
 <script>
+  // The name decodes from random glyphs once per visit; the real text is always in the DOM for
+  // assistive tech (sr-only) and for anyone without JavaScript.
+  const target = document.querySelector<HTMLElement>('[data-scramble]');
+  const quiet = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let seen = false;
+  try {
+    seen = sessionStorage.getItem('scrambled') === '1';
+    sessionStorage.setItem('scrambled', '1');
+  } catch {
+    // Storage blocked: play every time.
+  }
+  if (target && !quiet && !seen) {
+    const text = (target.textContent ?? '').trim();
+    // Same case as the letter it stands in for, so the line keeps roughly its width.
+    const upper = 'ABCDEFGHKLMNPRSTUVXYZ';
+    const lower = 'abcdeghknopqrsuvxyz';
+    const pick = (set: string) => set[Math.floor(Math.random() * set.length)];
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = now - start;
+      let out = '';
+      let done = true;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === ' ' || t >= 180 + i * 55) out += ch;
+        else {
+          done = false;
+          out += pick(ch === ch.toUpperCase() ? upper : lower);
+        }
+      }
+      target.textContent = out;
+      if (!done) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
   // Copy the e-mail address; the mailto link stays for everyone without clipboard access.
   const button = document.querySelector<HTMLButtonElement>('[data-copy]');
   const status = document.querySelector('.copy__status');
@@ -308,10 +281,10 @@ const skills = [
     button.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(button.dataset.copy ?? '');
-        status.textContent = 'Copied';
+        status.textContent = 'copied';
         setTimeout(() => (status.textContent = ''), 2000);
       } catch {
-        status.textContent = 'Copy blocked, use the link';
+        status.textContent = 'copy blocked, use the link';
       }
     });
   }
@@ -320,170 +293,153 @@ const skills = [
 <style>
   .hero {
     display: grid;
-    gap: clamp(1rem, 2vw, 1.5rem);
-    padding-block: clamp(3.5rem, 9vw, 7rem) 0;
+    gap: 1.4rem;
+    padding-block: clamp(3.5rem, 12vw, 8rem) 0;
   }
 
-  .hero .display {
-    max-width: 16ch;
+  .hero .statement {
+    max-width: 22ch;
   }
 
-  .hero__grid {
+  .hero .lead {
+    max-width: 58ch;
+  }
+
+  /* Status lines: a small accent dot, the first one breathing. */
+  .status {
     display: grid;
-    gap: 2rem;
-    margin-top: clamp(0.5rem, 2vw, 1.5rem);
+    gap: 0.35rem;
+    color: var(--muted);
   }
 
-  @media (width >= 64rem) {
-    .hero__grid {
-      grid-template-columns: 7fr 5fr;
-      column-gap: 4rem;
-      align-items: start;
-    }
-  }
-
-  .hero__intro {
-    display: grid;
-    gap: 1.25rem;
-  }
-
-  .facts {
-    display: grid;
-    border-top: 1px solid var(--rule);
-  }
-
-  .facts > div {
-    display: grid;
-    grid-template-columns: 5.5rem 1fr;
-    gap: 1rem;
-    padding-block: 0.7rem;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .section__intro {
-    display: grid;
-    gap: 0.5rem;
-  }
-
-  .area + .area {
-    margin-top: clamp(2rem, 5vw, 3rem);
-  }
-
-  .area__title {
-    margin-bottom: 0.75rem;
-  }
-
-  .all {
+  .status li {
     display: flex;
-    flex-wrap: wrap;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 0.5rem 2rem;
-    margin-top: clamp(2rem, 5vw, 3rem);
-    padding-block: 1.5rem;
-    border-block: 1px solid var(--ink);
-    text-decoration: none;
-    transition: background-color 180ms var(--ease);
+    gap: 0.7rem;
   }
 
-  .all:hover {
-    background: var(--surface);
+  .status li::before {
+    content: '';
+    flex: none;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--accent);
+    translate: 0 -0.05rem;
   }
 
-  .all:hover .h3 {
-    text-decoration: underline 1px var(--accent);
-    text-underline-offset: 0.2em;
-  }
-
-  .habits {
-    display: grid;
-    gap: 2rem;
-  }
-
-  @media (width >= 48rem) {
-    .habits {
-      grid-template-columns: repeat(3, 1fr);
+  @media (prefers-reduced-motion: no-preference) {
+    .status li:first-child::before {
+      animation: breathe 2.4s ease-in-out infinite;
     }
   }
 
-  .habits li {
-    display: grid;
-    align-content: start;
-    gap: 0.6rem;
-  }
-
-  .about {
-    display: grid;
-    gap: 3rem;
-  }
-
-  @media (width >= 64rem) {
-    .about {
-      grid-template-columns: 8fr 4fr;
-      column-gap: 4rem;
+  @keyframes breathe {
+    50% {
+      box-shadow: 0 0 0 0.3rem color-mix(in oklab, var(--accent) 22%, transparent);
     }
   }
 
+  .intro {
+    max-width: 58ch;
+    margin-bottom: 1rem;
+  }
+
+  .more {
+    margin-top: 1rem;
+  }
+
+  .more a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    font-weight: 560;
+  }
+
+  .habits,
   .timeline {
     display: grid;
+    gap: 1.4rem;
+  }
+
+  .habits li,
+  .timeline li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 1rem;
   }
 
   .timeline li {
-    display: grid;
-    gap: 0.25rem 2rem;
-    padding-block: 1.25rem;
-    border-top: 1px solid var(--rule);
+    grid-template-columns: 7.5rem minmax(0, 1fr);
   }
 
-  @media (width >= 48rem) {
-    .timeline li {
-      grid-template-columns: 11rem 1fr;
-    }
-  }
-
+  .habit__title,
   .timeline__role {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 620;
+    font-stretch: 108%;
+  }
+
+  .timeline__role .muted {
+    font-weight: 400;
+    font-stretch: 100%;
+  }
+
+  .row__num {
+    padding-top: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
   }
 
   .skills {
     display: grid;
-    align-content: start;
-    gap: 1.25rem;
+    gap: 0.6rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
   }
 
   .skills div {
     display: grid;
-    gap: 0.25rem;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 1rem;
   }
 
-  .contact {
-    display: grid;
-    gap: 1.25rem;
+  @media (width < 34rem) {
+    .timeline li,
+    .skills div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.15rem;
+    }
   }
 
-  .contact__mail {
+  .mail {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.75rem 1.5rem;
+    gap: 0.5rem 1rem;
+    margin-top: 1.25rem;
   }
 
-  .contact__address {
-    font-size: clamp(1.75rem, 1rem + 3.4vw, 3.5rem);
+  .mail__address {
+    font-size: clamp(1.4rem, 1rem + 2.2vw, 2.4rem);
+    font-weight: 650;
+    font-stretch: 115%;
+    letter-spacing: -0.02em;
     overflow-wrap: anywhere;
   }
 
   .copy {
-    min-height: 2.75rem;
-    padding: 0.35rem 1rem;
-    border: 1px solid var(--rule-strong);
+    min-height: 2.25rem;
+    padding: 0.25rem 0.9rem;
+    border: 1px solid var(--rule);
     border-radius: 999px;
     background: none;
-    font-size: 0.9375rem;
+    transition: border-color 0.2s var(--ease);
   }
 
   .copy:hover {
-    border-color: var(--accent);
+    border-color: var(--muted);
   }
 </style>

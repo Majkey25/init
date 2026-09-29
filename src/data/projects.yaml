@@ -131,6 +131,14 @@
   links:
     - { label: Open, href: 'https://majkey25.github.io/art_by_justyna/' }
 
+- name: Petr Teplý
+  group: web
+  kind: One-page website for a commercial support business
+  stack: [HTML, CSS]
+  links:
+    - { label: Open, href: 'https://majkey25.github.io/petrteply/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/petrteply' }
+
 - name: SeliaScan
   formerly: ScanIt
   group: android
@@ -224,6 +232,13 @@
   stack: [Kotlin, Shizuku]
   links:
     - { label: Repository, href: 'https://github.com/Majkey25/scrollit' }
+
+- name: SumRead
+  group: android
+  kind: Screen-text overlay with on-device OCR and speech, and optional AI summaries with your own key (archived)
+  stack: [Kotlin, Jetpack Compose, ML Kit]
+  links:
+    - { label: Repository, href: 'https://github.com/Majkey25/SumRead' }
 
 - name: Tab equalizer
   group: extensions

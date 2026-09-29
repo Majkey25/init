@@ -5,6 +5,15 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 /** Path inside the site: href('work/') -> /init/work/ in production, /work/ locally. */
 export const href = (path = '') => `${base}${path}`;
 
+/** URL part of a project page: "Selia Weather" -> "selia-weather". */
+export const slug = (name: string) =>
+  name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
 export const profile = {
   email: 'majkeylab@gmail.com',
   socials: [
