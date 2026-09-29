@@ -1,0 +1,167 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { href, slug } from '../../site';
+
+export const getStaticPaths = (async () => {
+  const featured = (await getCollection('projects'))
+    .map((e) => e.data)
+    .filter((p) => p.featured)
+    .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
+  return featured.map((p, i) => ({
+    params: { slug: slug(p.name) },
+    props: { p, i, next: featured[(i + 1) % featured.length] },
+  }));
+}) satisfies GetStaticPaths;
+
+const { p, i, next } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const story = [
+  { label: 'Problem', text: p.problem },
+  { label: 'Approach', text: p.approach },
+  { label: 'Result', text: p.result },
+];
+---
+
+<Base title={p.name} description={`${p.name}: ${p.kind}. ${p.problem}`}>
+  <article class="case wrap">
+    <p class="mono muted" data-enter style="--i: 0">
+      <a href={href()}>~</a> / <a href={href('#work')}>work</a> / {pad(i + 1)}
+    </p>
+    <h1 class="title" style={`view-transition-name: p-${slug(p.name)}`}>
+      {p.name}
+    </h1>
+    <p class="statement" data-enter style="--i: 1">
+      {p.kind}
+    </p>
+    <dl class="facts mono" data-enter style="--i: 2">
+      <div>
+        <dt class="muted">area</dt>
+        <dd>{p.featured?.area}</dd>
+      </div>
+      <div>
+        <dt class="muted">stack</dt>
+        <dd>{p.stack.join(' · ')}</dd>
+      </div>
+      <div>
+        <dt class="muted">as of</dt>
+        <dd>{p.as_of}</dd>
+      </div>
+      {p.formerly && (
+        <div>
+          <dt class="muted">formerly</dt>
+          <dd>{p.formerly}</dd>
+        </div>
+      )}
+    </dl>
+
+    {story.map((s) => (
+      <section class="part" aria-labelledby={`${s.label}-title`} data-reveal>
+        <h2 id={`${s.label}-title`} class="label">
+          {s.label}
+        </h2>
+        <p>{s.text}</p>
+        {s.label === 'Approach' && p.specimen && (
+          <figure class="specimen">
+            <figcaption class="mono muted">example</figcaption>
+            <p lang="cs">
+              <del>{p.specimen.before}</del>
+            </p>
+            <p lang="cs">
+              <ins>{p.specimen.after}</ins>
+            </p>
+          </figure>
+        )}
+      </section>
+    ))}
+
+    <section class="part" aria-labelledby="links-title" data-reveal>
+      <h2 id="links-title" class="label">
+        Links
+      </h2>
+      <ul class="inline-list">
+        {p.links.map((l) => (
+          <li>
+            <a class="ext" href={l.href} rel="noopener" target="_blank">
+              {l.label}
+            </a>
+          </li>
+        ))}
+        {p.source === 'private' && <li class="mono muted">source private</li>}
+      </ul>
+    </section>
+
+    <nav class="next" aria-label="Next project">
+      <a class="row" href={href(`work/${slug(next.name)}/`)}>
+        <span class="row__num">→</span>
+        <span class="row__main">
+          <span class="mono muted">next</span>
+          <span class="row__name" style={`view-transition-name: p-${slug(next.name)}`}>
+            {next.name}
+          </span>
+        </span>
+        <span class="row__meta">{next.featured?.area}</span>
+      </a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .case {
+    display: grid;
+    gap: 1.25rem;
+    padding-top: clamp(3rem, 10vw, 6rem);
+  }
+
+  .case > .mono a {
+    text-decoration: none;
+  }
+
+  .facts {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+
+  .facts div {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .part {
+    padding-top: clamp(2rem, 6vw, 3rem);
+  }
+
+  .part > p {
+    max-width: 62ch;
+    font-size: 1.0625rem;
+    text-wrap: pretty;
+  }
+
+  .specimen {
+    display: grid;
+    gap: 0.3rem;
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.6rem;
+  }
+
+  .specimen del {
+    color: var(--muted);
+    text-decoration-color: var(--split-a);
+  }
+
+  .specimen ins {
+    text-decoration: underline 2px var(--accent);
+    text-underline-offset: 0.25em;
+  }
+
+  .next {
+    margin-top: clamp(2.5rem, 7vw, 4rem);
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+</style>

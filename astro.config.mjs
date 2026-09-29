@@ -9,30 +9,22 @@ export default defineConfig({
   build: { inlineStylesheets: 'always' },
   fonts: [
     {
-      // Statement and headings: a screen-first serif, light at display size.
+      // One family for everything readable; the width axis gives the name its expanded cut.
       provider: fontProviders.fontsource(),
-      name: 'Spectral',
-      cssVariable: '--font-serif',
-      weights: [300, 400],
-      styles: ['normal', 'italic'],
-      subsets: ['latin', 'latin-ext'],
-      fallbacks: ['Georgia', 'serif'],
-    },
-    {
-      provider: fontProviders.fontsource(),
-      name: 'Hanken Grotesk',
+      name: 'Mona Sans',
       cssVariable: '--font-sans',
-      weights: ['400 600'],
+      weights: ['200 900'],
       styles: ['normal'],
+      stretch: '75% 125%',
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['system-ui', 'Arial', 'sans-serif'],
     },
     {
-      // Only where data has to line up: stacks, dates, metrics.
+      // Labels, dates and the status lines.
       provider: fontProviders.fontsource(),
-      name: 'IBM Plex Mono',
+      name: 'Geist Mono',
       cssVariable: '--font-mono',
-      weights: [400],
+      weights: ['400 500'],
       styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['ui-monospace', 'Consolas', 'monospace'],
