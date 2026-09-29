@@ -14,11 +14,11 @@ const id = `case-${number}`;
 <article class="case" aria-labelledby={id}>
   <div class="case__meta">
     <p class="data">{number}</p>
-    <h3 class="h3" id={id}>
+    <h4 class="h3" id={id}>
       <a href={p.links[0]?.href} rel="noopener" target="_blank">
         {p.name}
       </a>
-    </h3>
+    </h4>
     <p class="muted">{p.kind}</p>
     {p.formerly && <p class="label">formerly {p.formerly}</p>}
     <p class="data">{p.stack.join(' · ')}</p>
@@ -87,7 +87,7 @@ const id = `case-${number}`;
     gap: 0.35rem;
   }
 
-  .case__meta h3 a {
+  .case__meta h4 a {
     text-decoration-color: var(--rule-strong);
   }
 

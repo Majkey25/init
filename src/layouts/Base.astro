@@ -6,12 +6,10 @@ import { href, profile } from '../site';
 interface Props {
   title?: string;
   description?: string;
-  /** Pages outside the home page mark their nav item. */
-  current?: 'work';
   noindex?: boolean;
 }
 
-const { title, description, current, noindex = false } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 const site = Astro.site ?? new URL('https://majkey25.github.io');
 const url = (path: string) => new URL(path, site).href;
 const pageTitle = title
@@ -103,13 +101,6 @@ const person = {
               <a href={n.href}>{n.label}</a>
             </li>
           ))}
-          {current === 'work' && (
-            <li class="sr-only">
-              <a href={href('work/')} aria-current="page">
-                All projects
-              </a>
-            </li>
-          )}
         </ul>
       </nav>
       <button class="theme" type="button" aria-pressed="false">
@@ -145,20 +136,31 @@ const person = {
       const root = document.documentElement;
       const button = document.querySelector<HTMLButtonElement>('.theme');
       const meta = document.querySelector('meta[name="theme-color"]');
-      const sync = () =>
-        button?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
-      sync();
+      const set = (theme: string) => {
+        root.dataset.theme = theme;
+        meta?.setAttribute('content', theme === 'dark' ? '#111215' : '#f7f6f2');
+        button?.setAttribute('aria-pressed', String(theme === 'dark'));
+      };
+      set(root.dataset.theme ?? 'light');
+      // A page restored by Back/Forward keeps the theme it was left with; apply a newer choice.
+      addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        try {
+          const saved = localStorage.getItem('theme');
+          if (saved === 'light' || saved === 'dark') set(saved);
+        } catch {
+          // Storage blocked: nothing newer to apply.
+        }
+      });
       button?.addEventListener('click', () => {
         const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
         const apply = () => {
-          root.dataset.theme = next;
-          meta?.setAttribute('content', next === 'dark' ? '#111215' : '#f7f6f2');
+          set(next);
           try {
             localStorage.setItem('theme', next);
           } catch {
             // Storage blocked: the choice lasts for this page only.
           }
-          sync();
         };
         const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (document.startViewTransition && !reduced) document.startViewTransition(apply);

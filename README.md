@@ -13,7 +13,7 @@ Personal site of Matěj Teplý (Majkey), AI/ML engineer and backend developer:
   the measured numbers and known limits), how I work, experience and education, music, contact.
 - **[/work/](https://majkey25.github.io/init/work/)**: every public project, grouped.
 - Light and dark theme (follows the system, remembers a manual choice), cross-document view
-  transitions, a print stylesheet that turns the home page into a one-page CV.
+  transitions, a print stylesheet for a clean paper copy.
 
 ## Editing
 
