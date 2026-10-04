@@ -2,20 +2,26 @@
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { href, slug } from '../../site';
+import { groups, href, slug } from '../../site';
 
+// Pinned projects first, in pin order, then every other project that has a full story.
 export const getStaticPaths = (async () => {
-  const featured = (await getCollection('projects'))
-    .map((e) => e.data)
+  const projects = (await getCollection('projects')).map((e) => e.data);
+  const pinned = projects
     .filter((p) => p.featured)
     .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
-  return featured.map((p, i) => ({
+  const cases = [
+    ...pinned,
+    ...projects.filter((p) => !p.featured && p.problem && p.approach && p.result),
+  ];
+  return cases.map((p, i) => ({
     params: { slug: slug(p.name) },
-    props: { p, i, next: featured[(i + 1) % featured.length] },
+    props: { p, i, next: cases[(i + 1) % cases.length] },
   }));
 }) satisfies GetStaticPaths;
 
 const { p, i, next } = Astro.props;
+const area = (x: typeof p) => x.featured?.area ?? groups[x.group];
 const pad = (n: number) => String(n).padStart(2, '0');
 const story = [
   { label: 'Problem', text: p.problem },
@@ -38,7 +44,7 @@ const story = [
     <dl class="facts mono" data-enter style="--i: 2">
       <div>
         <dt class="muted">area</dt>
-        <dd>{p.featured?.area}</dd>
+        <dd>{area(p)}</dd>
       </div>
       <div>
         <dt class="muted">stack</dt>
@@ -101,7 +107,7 @@ const story = [
             {next.name}
           </span>
         </span>
-        <span class="row__meta">{next.featured?.area}</span>
+        <span class="row__meta">{area(next)}</span>
       </a>
     </nav>
   </article>

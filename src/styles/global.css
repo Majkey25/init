@@ -300,6 +300,45 @@ a.row:focus-visible {
   }
 }
 
+/* Hover card: the problem a project solves, trailing the pointer (created by Base.astro). */
+.peek {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  gap: 0.3rem;
+  width: min(22rem, 70vw);
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--bg) 86%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 40px -16px rgb(0 0 0 / 0.3);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.96;
+  transform-origin: top left;
+  transition:
+    opacity 0.2s var(--ease),
+    scale 0.2s var(--ease);
+}
+
+.peek.is-on {
+  opacity: 1;
+  scale: 1;
+}
+
+.peek__label {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -307,6 +346,11 @@ a.row:focus-visible {
   [data-enter] {
     animation: enter 0.6s var(--ease) both;
     animation-delay: calc(var(--i, 0) * 80ms);
+  }
+
+  /* Under the boot screen the hero is already painted; its entrance runs as the screen lifts. */
+  .booting [data-enter] {
+    animation: none;
   }
 
   /* Hover: a short chromatic split on the name, a quiet echo of a glitch. */

@@ -1,12 +1,12 @@
 # Projects shown on the site. Order in this file is the order inside each group on /work/.
-# featured: order + area put a project on the home page as a case row (problem / approach / result).
+# featured: order + area put a project on the home page (the repos pinned on the GitHub profile).
+# problem + approach + result + as_of give a project its own case page.
 # as_of dates the result, because versions and numbers change.
 
 - name: CzechCore
   group: ai
   kind: Offline Czech grammar correction
   stack: [Python, PyTorch, CTranslate2, UDPipe]
-  featured: { order: 1, area: AI and language }
   problem: Correct Czech grammar on the device, with exact edit ranges an editor can underline, without sending text anywhere.
   approach: A 60.8M-parameter Czech correction model from ÚFAL reads the whole sentence, UDPipe provides exact token ranges, and deterministic guards protect URLs, e-mail addresses, dates, version and phone numbers, and code-like tokens. A separate local-LLM rewrite mode always asks for human review. The source includes an Android keyboard and a Windows TSF adapter.
   specimen: { before: Muži přišly domů., after: Muži přišli domů. }
@@ -40,6 +40,11 @@
   group: ai
   kind: Turns tasks into prompts and agent rules with built-in verification criteria, for Claude Code, Codex and ChatGPT
   stack: [Python, Markdown]
+  featured: { order: 4, area: AI and language }
+  problem: Most prompt collections gather clever phrases. A prompt a team relies on needs a clear contract and a way to check what comes back.
+  approach: The skill turns a rough request into a prompt contract (objective, context, task, constraints, output format, verification and failure handling), following current OpenAI, Anthropic and Google guidance. Coding prompts are routed by the repository evidence that is available instead of invented details.
+  result: Installs as a skill in ChatGPT, Codex and Claude Code. It ships a heuristic prompt linter and a generator for eval starter manifests, and for important prompts it pushes eval cases and iteration instead of guessing.
+  as_of: Sep 2026
   links:
     - { label: Repository, href: 'https://github.com/Majkey25/prompt-engineering-skill' }
 
@@ -47,7 +52,6 @@
   group: tools
   kind: GitHub project audit
   stack: [Python, Streamlit, LLM tool calling]
-  featured: { order: 2, area: AI and language }
   problem: '"Which items are missing the fields or links my team expects?" asked across issues, pull requests and Project V2 boards.'
   approach: A local Streamlit app checks issues, pull requests and branches against rules you configure, and a local HTTP API serves the issue and pull request findings. An optional LLM assistant with tool calling explains the gaps and prepares field values you review before they apply.
   result: Runs on your machine; project data goes only to the GitHub API and the LLM endpoint you choose, which can be a local Ollama. Exports a self-contained offline HTML report. CI enforces Pyright strict, Ruff and pytest. Project board now reimplements these checks in TypeScript.
@@ -73,7 +77,7 @@
   group: web
   kind: Separates project phases from deployed versions
   stack: [React 19, TypeScript, Cloudflare Workers, D1]
-  featured: { order: 3, area: Backend and web }
+  featured: { order: 1, area: Backend and web }
   source: private
   problem: A kanban card can say "testing", but it cannot say that 1.4 is in testing while 1.3 runs in production.
   approach: Projects move through custom columns while their target, test and production versions are tracked separately. Board content is encrypted with AES-256-GCM, sign-in uses a GitHub App with OAuth PKCE, and agents get scoped, expiring API tokens that never exceed their creator's permissions.
@@ -87,7 +91,6 @@
   group: web
   kind: An RC filter you can hear
   stack: [TypeScript, React 19, Web Audio, Vite]
-  featured: { order: 4, area: Backend and web }
   problem: A credit project for Tomas Bata University in Zlín, to make capacitor charging and first-order filters something you can see and hear.
   approach: The filter runs in an AudioWorklet with bilinear-transform coefficients prewarped at the cutoff. The equations update with the substituted values, and you can switch A/B on a guitar riff built from one recorded note.
   result: Playwright tests in Chromium and Firefox render the production audio processor offline and compare the measured amplitude and phase with the maths; the default high-pass must cut the test recording by more than 20 dB.
@@ -96,18 +99,26 @@
     - { label: Open the lab, href: 'https://majkey25.github.io/rc-audio-lab/' }
     - { label: Repository, href: 'https://github.com/Majkey25/rc-audio-lab' }
 
-- name: Band websites
+- name: WeTheGods
   group: web
-  kind: Exhalace and WeTheGods
+  kind: Official website of the Czech metalcore band I play bass in
   stack: [Astro 7, Pages CMS, GitHub Actions]
-  featured: { order: 5, area: Backend and web }
-  problem: Two bands needed sites their members can update themselves, with no server to look after.
-  approach: Static Astro sites on GitHub Pages. Concerts, releases and line-ups live in YAML, edited through Pages CMS and validated at build time, so a broken edit never goes live. Each concert gets its own page and calendar file.
-  result: Every pull request runs a format check, type check, build and Lighthouse CI, and a nightly rebuild moves past shows to the archive.
+  featured: { order: 6, area: Backend and web }
+  problem: The band needed a site its members can update themselves, with no server to look after.
+  approach: A static Astro site on GitHub Pages. Shows, releases and the line-up live in YAML, edited through Pages CMS and validated at build time, so a broken edit never goes live. Each show gets its own page and calendar file.
+  result: Every pull request runs a format check, type check, build and Lighthouse CI, and a nightly rebuild moves past shows to the archive. Processed images are cached per workflow, so a deploy without new images takes under a minute.
   as_of: Sep 2026
   links:
+    - { label: Website, href: 'https://majkey25.github.io/WeTheGods/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/WeTheGods' }
+
+- name: Exhalace
+  group: web
+  kind: Website for the rock band Exhalace, which the band edits in Pages CMS
+  stack: [Astro 7, Pages CMS, FormSubmit]
+  links:
     - { label: exhalace.cz, href: 'https://www.exhalace.cz/' }
-    - { label: WeTheGods, href: 'https://majkey25.github.io/WeTheGods/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/exhalace' }
 
 - name: Media Downloader
   group: web
@@ -144,7 +155,7 @@
   group: android
   kind: Scan, save, share
   stack: [Kotlin, Jetpack Compose, ML Kit]
-  featured: { order: 6, area: Android apps }
+  featured: { order: 2, area: Android apps }
   problem: Scanning a document on Android should not need an account or a file manager.
   approach: Google's ML Kit document scanner handles capture. On-device OCR, redaction burned into a protected revision, reusable signatures and stamps, and orientation fixes applied only when the angle of the text lines gives reliable evidence.
   result: Version 1.8.2 for Android 10 and newer, MIT-licensed on GitHub with every feature unlocked, no Internet permission of its own, five interface languages.
@@ -157,7 +168,7 @@
   group: android
   kind: A forecast that names its sources
   stack: [Kotlin, Jetpack Compose]
-  featured: { order: 7, area: Android apps }
+  featured: { order: 5, area: Android apps }
   problem: Weather models disagree and a single forecast hides it. Czech users also expect ČHMÚ data.
   approach: The app requests several model families and computes a robust median on the device when at least three values exist. It adds ČHMÚ ALADIN for Czech locations, observed radar, DWD ICON maps and a five-year NASA POWER archive, and the details screen lists which models contributed.
   result: In a 313-case temperature replay a three-model median had a lower pooled error than Open-Meteo Best Match. The report keeps the station-level failures, and the app makes no claim of superior accuracy.
@@ -174,7 +185,7 @@
   group: android
   kind: Offline instrument tuner
   stack: [Kotlin, Jetpack Compose, audio DSP]
-  featured: { order: 8, area: Android apps }
+  featured: { order: 3, area: Android apps }
   problem: A tuner should open on the tuner, without an account, ads or network.
   approach: Auto, manual and chromatic modes, presets for guitars, basses, ukulele and the violin family, an adjustable A4 reference, on-device tempo detection and chord analysis of local audio files. Feedback rejection limits the in-tune chime feeding back into detection.
   result: Free on Google Play with every feature included and no network permission at all.

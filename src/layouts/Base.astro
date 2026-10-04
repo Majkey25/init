@@ -7,9 +7,11 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  /** Lines of the first-visit boot log; only the home page passes them. */
+  boot?: string[];
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, boot } = Astro.props;
 const site = Astro.site ?? new URL('https://majkey25.github.io');
 const url = (path: string) => new URL(path, site).href;
 const pageTitle = title
@@ -34,6 +36,19 @@ const person = {
   alternateName: 'Majkey',
   url: url(href()),
   jobTitle: 'Fullstack AI developer',
+  description:
+    'AI/ML engineer and backend developer who builds agentic RAG systems and AI agents in Python, and ships private, offline-first Android apps and developer tools.',
+  knowsAbout: [
+    'Agentic RAG',
+    'AI agents',
+    'Context engineering',
+    'Large language models',
+    'Python',
+    'Backend development',
+    'Android development',
+    'Kotlin',
+  ],
+  homeLocation: { '@type': 'Place', name: 'Zlín area, Czechia' },
   worksFor: { '@type': 'Organization', name: 'OKsystem' },
   affiliation: { '@type': 'CollegeOrUniversity', name: 'Tomas Bata University in Zlín' },
   email: `mailto:${profile.email}`,
@@ -77,6 +92,16 @@ const person = {
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0b0b0c');
       })();
     </script>
+    {boot && <script is:inline>
+      // Boot log once per visit, decided before the first paint so the page never flashes.
+      try {
+        if (
+          sessionStorage.getItem('booted') !== '1' &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches
+        )
+          document.documentElement.classList.add('booting');
+      } catch {}
+    </script>}
     <script type="application/ld+json" set:html={JSON.stringify(person).replace(/</g, '\\u003c')} />
     <script type="speculationrules" set:html={JSON.stringify(speculation)} />
   </head>
@@ -85,6 +110,28 @@ const person = {
       Skip to content
     </a>
     <div class="spotlight no-print" aria-hidden="true"></div>
+    {boot && (
+      <div class="boot no-print" data-theme="dark" aria-hidden="true">
+        <canvas class="boot__rain" />
+        <div class="boot__panel wrap">
+          <p class="boot__log mono">
+            {boot.map((line, i) => (
+              <span style={`--i: ${i}`}>
+                {line.startsWith('[ ok ]') ? (
+                  <>
+                    <b>[ ok ]</b>
+                    {line.slice(6)}
+                  </>
+                ) : (
+                  line
+                )}
+              </span>
+            ))}
+          </p>
+          <span class="boot__bar" />
+        </div>
+      </div>
+    )}
 
     <header class="header no-print">
       <div class="header__bar wrap">
@@ -210,6 +257,136 @@ const person = {
           { passive: true },
         );
       }
+
+      // Boot: the log types itself (CSS) over falling code, then the screen lifts off the page.
+      // Any input skips it, and a late start (slow script, prerendered page, background tab) skips
+      // it outright, so the overlay never returns over a page someone is already reading.
+      const boot = document.querySelector<HTMLElement>('.boot');
+      const booted = () => {
+        try {
+          sessionStorage.setItem('booted', '1');
+        } catch {
+          // Storage blocked: the boot plays again next time.
+        }
+        root.classList.remove('booting');
+        document.dispatchEvent(new Event('init:booted'));
+      };
+      const run = (boot: HTMLElement) => {
+        let ended = false;
+        const end = () => {
+          if (ended) return;
+          ended = true;
+          boot.classList.add('is-out');
+          booted();
+          setTimeout(() => boot.remove(), 600);
+        };
+        boot.classList.add('is-run');
+        setTimeout(end, 1550);
+        for (const type of ['pointerdown', 'keydown', 'wheel', 'touchstart'])
+          addEventListener(type, end, { once: true, passive: true });
+
+        // Columns of code glyphs fall and leave fading trails, about 25 frames a second.
+        const canvas = boot.querySelector('canvas');
+        const ctx = canvas?.getContext('2d');
+        if (!canvas || !ctx) return;
+        const w = innerWidth;
+        const h = innerHeight;
+        const ratio = Math.min(devicePixelRatio, 2);
+        const size = 16;
+        canvas.width = w * ratio;
+        canvas.height = h * ratio;
+        ctx.scale(ratio, ratio);
+        ctx.font = `${size - 3}px ${getComputedStyle(canvas).fontFamily}`;
+        const ink = getComputedStyle(boot).getPropertyValue('--accent').trim();
+        const glyphs = '01{}[]<>/=+*;:#$_';
+        // Columns start anywhere from above the top to most of the way down, so the screen fills.
+        const rows = h / size;
+        const drops = Array.from(
+          { length: Math.ceil(w / size) },
+          () => (Math.random() - 0.4) * rows,
+        );
+        let last = 0;
+        const rain = (now: number) => {
+          if (!boot.isConnected) return;
+          if (now - last > 40) {
+            last = now;
+            // Fade what is drawn toward transparent, not toward a colour, so no banding builds up.
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgb(0 0 0 / 0.2)';
+            ctx.fillRect(0, 0, w, h);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = ink;
+            drops.forEach((row, i) => {
+              ctx.fillText(glyphs[Math.floor(Math.random() * glyphs.length)], i * size, row * size);
+              drops[i] = row * size > h && Math.random() > 0.9 ? 0 : row + 1;
+            });
+          }
+          requestAnimationFrame(rain);
+        };
+        requestAnimationFrame(rain);
+      };
+      if (boot && root.classList.contains('booting')) {
+        if (document.visibilityState === 'hidden' || performance.now() > 3000) {
+          boot.remove();
+          booted();
+        } else run(boot);
+      }
+
+      // Project rows: a card with the project's problem statement trails the pointer.
+      const rows = document.querySelectorAll<HTMLElement>('a.row[data-desc]');
+      if (rows.length && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        const card = document.createElement('div');
+        const label = document.createElement('span');
+        const text = document.createElement('span');
+        card.className = 'peek';
+        label.className = 'peek__label';
+        label.textContent = 'problem';
+        card.setAttribute('aria-hidden', 'true');
+        card.append(label, text);
+        document.body.append(card);
+        const lag = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 0.2;
+        let x = 0;
+        let y = 0;
+        let cx = 0;
+        let cy = 0;
+        let frame = 0;
+        const follow = () => {
+          cx += (x - cx) * lag;
+          cy += (y - cy) * lag;
+          card.style.translate = `${cx}px ${cy}px`;
+          frame = Math.abs(x - cx) + Math.abs(y - cy) > 0.5 ? requestAnimationFrame(follow) : 0;
+        };
+        // Right of and below the pointer, flipped when that would leave the viewport, and kept
+        // inside it when neither side fits (narrow windows).
+        const fit = (at: number, size: number, room: number) =>
+          Math.max(
+            12,
+            Math.min(at + 24 + size > room - 12 ? at - 24 - size : at + 24, room - 12 - size),
+          );
+        const aim = (e: PointerEvent) => {
+          x = fit(e.clientX, card.offsetWidth, innerWidth);
+          y = fit(e.clientY, card.offsetHeight, innerHeight);
+        };
+        // Escape dismisses the card until the pointer enters another row.
+        addEventListener('keydown', (e) => e.key === 'Escape' && card.classList.remove('is-on'));
+        rows.forEach((row) => {
+          row.addEventListener('pointerenter', (e) => {
+            text.textContent = row.dataset.desc ?? '';
+            aim(e);
+            if (!card.classList.contains('is-on')) {
+              cx = x;
+              cy = y;
+              card.style.translate = `${cx}px ${cy}px`;
+            }
+            card.classList.add('is-on');
+          });
+          row.addEventListener('pointermove', (e) => {
+            aim(e);
+            if (!frame) frame = requestAnimationFrame(follow);
+          });
+          row.addEventListener('pointerleave', () => card.classList.remove('is-on'));
+        });
+      }
     </script>
   </body>
 </html>
@@ -231,6 +408,110 @@ const person = {
 
   .spotlight.is-on {
     opacity: 1;
+  }
+
+  /* Boot: first visit to the home page only, about two seconds, always in the dark theme. */
+  .boot {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-content: center;
+    background: var(--bg);
+    color: var(--ink);
+    clip-path: inset(0);
+    transition: clip-path 0.55s var(--ease);
+  }
+
+  :global(.booting) .boot,
+  .boot.is-out {
+    display: grid;
+  }
+
+  /* Gone after 4 s even if the page script never runs. */
+  :global(.booting) .boot:not(.is-run) {
+    animation: boot-gone 0s 4s forwards;
+  }
+
+  .boot.is-out {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  /* The rain fades out toward the middle, so the log stays readable. */
+  .boot__rain {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-mono);
+    opacity: 0.5;
+    mask-image: radial-gradient(ellipse at center, transparent 15%, #000 75%);
+  }
+
+  .boot__panel {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .boot__log {
+    display: grid;
+    gap: 0.2rem;
+    color: var(--muted);
+    font-size: clamp(0.75rem, 0.62rem + 0.7vw, 0.9375rem);
+  }
+
+  .boot__log span {
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .boot__log span:last-child {
+    color: var(--ink);
+  }
+
+  .boot__log b {
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .boot__bar {
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .boot.is-run .boot__log span {
+    animation: boot-type 0.18s steps(16, end) forwards;
+    animation-delay: calc(0.1s + var(--i) * 0.16s);
+  }
+
+  .boot.is-run .boot__bar {
+    animation: boot-load 1.35s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+  }
+
+  .boot.is-out .boot__panel {
+    animation: split 0.3s steps(3, end) 1;
+  }
+
+  @keyframes boot-type {
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  @keyframes boot-load {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes boot-gone {
+    to {
+      visibility: hidden;
+    }
   }
 
   .header {
