@@ -8,6 +8,7 @@ const sections = (Object.keys(groups) as (keyof typeof groups)[])
   .map((key) => ({ key, title: groups[key], list: projects.filter((p) => p.group === key) }))
   .filter((s) => s.list.length > 0);
 const pad = (n: number) => String(n).padStart(2, '0');
+const cases = projects.filter((p) => p.problem && p.approach && p.result).length;
 ---
 
 <Base
@@ -22,8 +23,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       All projects <span class="muted">({projects.length})</span>
     </h1>
     <p class="lead" data-enter style="--i: 2">
-      Public projects, grouped by what they are. Private sources are marked. Eight of them have a
-      <a href={href('#work')}>full case study</a>.
+      Public projects, grouped by what they are. Private sources are marked; the {cases} marked ↳
+      have a full case study, and the <a href={href('#work')}>pinned ones</a> lead the home page.
     </p>
     <nav aria-label="Groups" data-enter style="--i: 3">
       <ul class="inline-list">
@@ -44,8 +45,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <ul class="rows" data-reveal>
         {s.list.map((p) => (
           <li class="project">
-            {p.featured ? (
-              <a class="row" href={href(`work/${slug(p.name)}/`)}>
+            {p.problem && p.approach && p.result ? (
+              <a class="row" href={href(`work/${slug(p.name)}/`)} data-desc={p.problem}>
                 <span class="row__num">↳</span>
                 <span class="row__main">
                   <span class="row__name" style={`view-transition-name: p-${slug(p.name)}`}>
