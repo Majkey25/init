@@ -15,7 +15,7 @@ const status = [
   { key: 'study', value: 'Software engineering, Tomas Bata University in Zlín' },
   { key: 'music', value: 'Bass and backing vocals in WeTheGods' },
 ];
-// Highlights of the certifications and courses on LinkedIn; certTotal counts all of them.
+// Highlights of the certifications and courses on LinkedIn; certTotal is a lower bound.
 const certTotal = 55;
 const certs = [
   {
@@ -58,7 +58,7 @@ const certs = [
 const boot = [
   'booting majkey25.github.io/init',
   `[ ok ] mounted /work: ${projects.length} projects`,
-  `[ ok ] loaded ${certTotal} credentials`,
+  `[ ok ] loaded over ${certTotal} credentials`,
   '[ ok ] started rag-agents.service',
   '[ ok ] started android-apps.service',
   '[ ok ] started music.service',
@@ -241,7 +241,7 @@ const skills = [
 
   <section id="certs" class="section wrap" aria-labelledby="certs-title">
     <h2 id="certs-title" class="label">
-      Certifications and courses <span class="count">({certTotal})</span>
+      Certifications and courses <span class="count">(over {certTotal})</span>
     </h2>
     <dl class="certs" data-reveal>
       {certs.map((c) => (
@@ -269,7 +269,7 @@ const skills = [
         rel="noopener"
         target="_blank"
       >
-        All {certTotal} with credential IDs on LinkedIn
+        Over {certTotal} with credential IDs on LinkedIn
       </a>
     </p>
   </section>
