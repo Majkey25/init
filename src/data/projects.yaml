@@ -1,5 +1,5 @@
 # Projects shown on the site. Order in this file is the order inside each group on /work/.
-# featured: order + area put a project on the home page (the repos pinned on the GitHub profile).
+# featured: order + area put a selected project on the home page.
 # problem + approach + result + as_of give a project its own case page.
 # as_of dates the result, because versions and numbers change.
 
@@ -111,6 +111,19 @@
   links:
     - { label: Website, href: 'https://majkey25.github.io/WeTheGods/' }
     - { label: Repository, href: 'https://github.com/Majkey25/WeTheGods' }
+
+- name: Skloservis Brod
+  group: web
+  kind: Czech/English website for a glassworking business in Uherský Brod
+  stack: [Astro 7, TypeScript, Pages CMS, GitHub Actions]
+  featured: { order: 7, area: Backend and web }
+  problem: Replace a WordPress business site while preserving its Czech service URLs and letting the owner update content without editing code.
+  approach: A static Czech and English Astro site with YAML content edited through Pages CMS. Local optimized photographs, category filters and product-specific galleries show the work, while opening hours and dated notices stay editable.
+  result: Live on skloservis-brod.cz with keyboard-accessible galleries and an enquiry form. GitHub Actions validates content, checks types and runs tests before building and publishing to GitHub Pages.
+  as_of: Oct 2026
+  links:
+    - { label: Website, href: 'https://www.skloservis-brod.cz/' }
+    - { label: Repository, href: 'https://github.com/Majkey25/skloservis-brod' }
 
 - name: Exhalace
   group: web
