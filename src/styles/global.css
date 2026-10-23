@@ -192,13 +192,37 @@ button {
 .inline-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
+  gap: 0.6rem;
 }
 
-.inline-list a {
+.action-link {
   display: inline-flex;
   align-items: center;
-  min-height: 2.5rem;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 560;
+  line-height: 1.4;
+  text-decoration: none;
+  transition:
+    border-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    color 0.2s var(--ease);
+}
+
+.action-link .glitch-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.action-link > svg {
+  flex: none;
 }
 
 /* ---------- Sections ---------- */
@@ -339,9 +363,87 @@ a.row:focus-visible {
   font-size: 0.75rem;
 }
 
+/* Interactive distortion: a stable label beneath a short burst of scrambled glyphs. */
+[data-glitch] {
+  position: relative;
+  isolation: isolate;
+}
+
+.glitch-label {
+  position: relative;
+  display: inline-grid;
+  white-space: pre-wrap;
+}
+
+/* This invisible copy reserves the original width, even while glyphs change. */
+.glitch-label::before {
+  content: attr(data-text);
+  visibility: hidden;
+}
+
+[data-glitch-text] {
+  position: absolute;
+  inset: 0;
+}
+
+.action-link[data-glitch]::before,
+button[data-glitch]::before,
+.header__nav [data-glitch]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    color-mix(in oklab, var(--accent) 20%, transparent) 3px 4px
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.action-link[data-glitch]:is(:hover, :focus-visible),
+button[data-glitch]:is(:hover, :focus-visible),
+.header__nav [data-glitch]:is(:hover, :focus-visible) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 25%, transparent);
+}
+
+.reading-progress {
+  --reading-timeline: scroll();
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
+  .is-glitching .glitch-label,
+  .is-glitching > svg {
+    animation: control-glitch 0.48s steps(1, end);
+  }
+
+  .action-link.is-glitching::before,
+  button.is-glitching::before,
+  .header__nav .is-glitching::before {
+    animation: control-scan 0.48s steps(1, end);
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .reading-progress {
+      animation: reading-progress linear both;
+      /* Keep the timeline separate from the animation shorthand during minification. */
+      animation-timeline: var(--reading-timeline);
+    }
+  }
+
   /* Load: children rise out of a soft blur, one after another. */
   [data-enter] {
     animation: enter 0.6s var(--ease) both;
@@ -374,6 +476,62 @@ a.row:focus-visible {
 
   @view-transition {
     navigation: auto;
+  }
+}
+
+@keyframes control-glitch {
+  0%,
+  24%,
+  56% {
+    translate: -1px 0;
+    transform: skewX(-6deg);
+    text-shadow:
+      -2px 0 var(--split-a),
+      2px 0 var(--split-b);
+    filter: drop-shadow(2px 0 var(--split-b));
+  }
+
+  12%,
+  40%,
+  68% {
+    translate: 1px 0;
+    transform: skewX(5deg);
+    text-shadow:
+      2px 0 var(--split-a),
+      -2px 0 var(--split-b);
+  }
+
+  80%,
+  100% {
+    translate: 0;
+    transform: none;
+    text-shadow: none;
+    filter: none;
+  }
+}
+
+@keyframes control-scan {
+  0%,
+  40% {
+    opacity: 0.65;
+    clip-path: inset(10% 0 45%);
+  }
+
+  20%,
+  60% {
+    opacity: 0.45;
+    clip-path: inset(55% 0 5%);
+  }
+
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes reading-progress {
+  to {
+    transform: scaleX(1);
   }
 }
 

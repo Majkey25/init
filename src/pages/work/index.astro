@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import GlitchText from '../../components/GlitchText.astro';
 import Base from '../../layouts/Base.astro';
 import { groups, href, slug } from '../../site';
 
@@ -30,7 +31,9 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
       <ul class="inline-list">
         {sections.map((s) => (
           <li>
-            <a href={`#${s.key}`}>{s.title}</a>
+            <a class="action-link" href={`#${s.key}`} data-glitch>
+              <GlitchText text={s.title} />
+            </a>
           </li>
         ))}
       </ul>
@@ -69,8 +72,14 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
                 </span>
                 <span class="row__meta links">
                   {p.links.map((l) => (
-                    <a class="ext" href={l.href} rel="noopener" target="_blank">
-                      {l.label}
+                    <a
+                      class="action-link ext"
+                      href={l.href}
+                      rel="noopener"
+                      target="_blank"
+                      data-glitch
+                    >
+                      <GlitchText text={l.label} />
                       <span class="sr-only"> · {p.name}</span>
                     </a>
                   ))}
@@ -103,21 +112,14 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
   .links {
     display: grid;
     justify-items: end;
-    gap: 0.1rem;
-  }
-
-  .links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2rem;
-    color: var(--ink);
+    gap: 0.5rem;
   }
 
   @media (width < 34rem) {
     .links {
       display: flex;
       flex-wrap: wrap;
-      gap: 0 1rem;
+      gap: 0.5rem;
     }
   }
 </style>
