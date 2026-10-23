@@ -1,5 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import schoolLogo from '../assets/brands/spszl.png';
+import stcLogo from '../assets/brands/stc.png';
+import utbLogo from '../assets/brands/utb.png';
 import GlitchText from '../components/GlitchText.astro';
 import SocialIcon from '../components/SocialIcon.astro';
 import Base from '../layouts/Base.astro';
@@ -124,6 +128,7 @@ const experience = [
     when: 'Jan 2023 – Jun 2025',
     role: 'Student Azure Programming',
     org: 'Student Trainee Center (STC)',
+    logo: stcLogo,
     support: true,
     note: 'Selected for a Microsoft-supported IT programme, building software, API and cloud projects with mentors. Final project: Music Analyzer, a Python/Flask app using Librosa, Spleeter and Demucs for six-stem music separation, playback and per-stem controls.',
   },
@@ -131,9 +136,15 @@ const experience = [
     when: '2025 – now',
     role: 'Software Engineering',
     org: 'Tomas Bata University in Zlín',
+    logo: utbLogo,
     note: 'Combined study covering algorithms, software design, databases, AI, networks and web/mobile development.',
   },
-  { when: '2021 – 2025', role: 'Mechanical Engineering', org: 'Střední průmyslová škola Zlín' },
+  {
+    when: '2021 – 2025',
+    role: 'Mechanical Engineering',
+    org: 'Střední průmyslová škola Zlín',
+    logo: schoolLogo,
+  },
 ];
 const skills = [
   {
@@ -287,12 +298,19 @@ const skills = [
               {e.role}{' '}
               <span class="muted">
                 ·{' '}
-                {e.org === 'Tomas Bata University in Zlín' && (
-                  <img
-                    class="timeline__utb-logo"
-                    src={href('utb.png')}
+                {e.logo && (
+                  <Image
+                    class:list={[
+                      'timeline__mark',
+                      { 'timeline__mark--school': e.org === 'Střední průmyslová škola Zlín' },
+                    ]}
+                    src={e.logo}
                     width="40"
                     height="40"
+                    densities={[1, 2, 3]}
+                    format="webp"
+                    loading="lazy"
+                    decoding="async"
                     alt=""
                   />
                 )}
@@ -618,10 +636,15 @@ const skills = [
     fill: #009645;
   }
 
-  .timeline__utb-logo {
+  .timeline__mark {
     display: inline-block;
     margin-right: 0.4rem;
     vertical-align: middle;
+  }
+
+  .timeline__mark--school {
+    background: #fff;
+    border-radius: 0.2rem;
   }
 
   .timeline__support {
