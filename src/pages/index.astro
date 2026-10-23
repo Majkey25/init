@@ -129,7 +129,7 @@ const experience = [
   },
   {
     when: '2025 – now',
-    role: 'Software Engineering, BSc studies',
+    role: 'Software Engineering, BSc + Ing./Mgr. studies',
     org: 'Tomas Bata University in Zlín',
     note: 'Combined study covering algorithms, software design, databases, AI, networks and web/mobile development.',
   },
@@ -287,6 +287,15 @@ const skills = [
               {e.role}{' '}
               <span class="muted">
                 ·{' '}
+                {e.org === 'Tomas Bata University in Zlín' && (
+                  <img
+                    class="timeline__utb-logo"
+                    src={href('utb.png')}
+                    width="40"
+                    height="40"
+                    alt=""
+                  />
+                )}
                 {e.org === 'OKsystem' ? (
                   <svg
                     class="timeline__logo"
@@ -607,6 +616,12 @@ const skills = [
     display: inline-block;
     vertical-align: middle;
     fill: #009645;
+  }
+
+  .timeline__utb-logo {
+    display: inline-block;
+    margin-right: 0.4rem;
+    vertical-align: middle;
   }
 
   .timeline__support {
