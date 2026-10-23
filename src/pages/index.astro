@@ -113,16 +113,10 @@ const habits = [
 ];
 const experience = [
   {
-    when: 'Jun 2025 – now',
-    role: 'Full-Stack AI/ML Engineer & Backend Developer',
-    org: 'OKsystem',
-    note: 'Build LLM chatbots and RAG pipelines with Python services, APIs, databases, automation and frontend integration. Work on Czech small-model fine-tuning and prototype new AI approaches with the innovation team. In one model comparison, estimated model cost fell from about $40 to $2 per 1,000 queries, with better observed answer quality. These are estimates, not audited production savings.',
-  },
-  {
-    when: 'May – Oct 2026',
-    role: 'AI Safety & Red Teaming Researcher',
-    org: 'Freelance',
-    note: 'Private safety evaluations of frontier generative AI for a confidential AI company under NDA. Independent, responsible vulnerability research.',
+    when: '2021 – 2025',
+    role: 'Mechanical Engineering',
+    org: 'Střední průmyslová škola Zlín',
+    logo: schoolLogo,
   },
   {
     when: 'Jan 2023 – Jun 2025',
@@ -133,6 +127,12 @@ const experience = [
     note: 'Selected for a Microsoft-supported IT programme, building software, API and cloud projects with mentors. Final project: Music Analyzer, a Python/Flask app using Librosa, Spleeter and Demucs for six-stem music separation, playback and per-stem controls.',
   },
   {
+    when: 'Jun 2025 – now',
+    role: 'Full-Stack AI/ML Engineer & Backend Developer',
+    org: 'OKsystem',
+    note: 'Build LLM chatbots and RAG pipelines with Python services, APIs, databases, automation and frontend integration. Work on Czech small-model fine-tuning and prototype new AI approaches with the innovation team. In one model comparison, estimated model cost fell from about $40 to $2 per 1,000 queries, with better observed answer quality. These are estimates, not audited production savings.',
+  },
+  {
     when: '2025 – now',
     role: 'Software Engineering',
     org: 'Tomas Bata University in Zlín',
@@ -140,10 +140,10 @@ const experience = [
     note: 'Combined study covering algorithms, software design, databases, AI, networks and web/mobile development.',
   },
   {
-    when: '2021 – 2025',
-    role: 'Mechanical Engineering',
-    org: 'Střední průmyslová škola Zlín',
-    logo: schoolLogo,
+    when: 'May – Oct 2026',
+    role: 'AI Safety & Red Teaming Researcher',
+    org: 'Freelance',
+    note: 'Private safety evaluations of frontier generative AI for a confidential AI company under NDA. Independent, responsible vulnerability research.',
   },
 ];
 const skills = [
@@ -615,7 +615,24 @@ const skills = [
   }
 
   .timeline li {
+    position: relative;
     grid-template-columns: 7.5rem minmax(0, 1fr);
+  }
+
+  .timeline {
+    padding-left: 1rem;
+    border-left: 1px solid var(--rule);
+  }
+
+  .timeline__when::before {
+    content: '';
+    position: absolute;
+    top: 0.6rem;
+    left: -1.25rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--accent);
   }
 
   .habit__title,
@@ -642,9 +659,10 @@ const skills = [
     vertical-align: middle;
   }
 
-  .timeline__mark--school {
-    background: #fff;
-    border-radius: 0.2rem;
+  @media screen {
+    :global([data-theme='dark']) .timeline__mark--school {
+      filter: invert(1);
+    }
   }
 
   .timeline__support {
