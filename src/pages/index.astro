@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import GlitchText from '../components/GlitchText.astro';
 import Base from '../layouts/Base.astro';
 import { href, profile, slug } from '../site';
 
@@ -86,7 +87,7 @@ const experience = [
     note: 'AI-enabled applications across backend, frontend, APIs, databases, performance and architecture.',
   },
   {
-    when: '2026 – now',
+    when: '2026 – Oct 2026',
     role: 'AI Safety & Red Teaming Researcher',
     org: 'Freelance',
     note: 'Independent safety evaluation and responsible vulnerability research on advanced generative AI systems.',
@@ -94,7 +95,8 @@ const experience = [
   {
     when: '2023 – 2025',
     role: 'Student Azure Programming',
-    org: 'Student Trainee Center',
+    org: 'Student Trainee Center (STC)',
+    support: true,
     note: 'Hands-on product, cloud and AI work, finished with Music Analyzer, which separates songs into stems.',
   },
   {
@@ -151,17 +153,19 @@ const skills = [
     </dl>
     <ul class="inline-list" data-enter style="--i: 5">
       <li>
-        <a class="ext" href={profile.socials[0].href} rel="noopener me" target="_blank">
-          GitHub
+        <a class="ext" href={profile.socials[0].href} rel="noopener me" target="_blank" data-glitch>
+          <GlitchText text="GitHub" />
         </a>
       </li>
       <li>
-        <a class="ext" href={profile.socials[1].href} rel="noopener me" target="_blank">
-          LinkedIn
+        <a class="ext" href={profile.socials[1].href} rel="noopener me" target="_blank" data-glitch>
+          <GlitchText text="LinkedIn" />
         </a>
       </li>
       <li>
-        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a href={`mailto:${profile.email}`} data-glitch>
+          <GlitchText text={profile.email} />
+        </a>
       </li>
     </ul>
   </section>
@@ -191,7 +195,9 @@ const skills = [
       ))}
     </ol>
     <p class="more">
-      <a href={href('work/')}>See all {projects.length} projects →</a>
+      <a href={href('work/')} data-glitch>
+        <GlitchText text={`See all ${projects.length} projects →`} />
+      </a>
     </p>
   </section>
 
@@ -224,6 +230,19 @@ const skills = [
             <h3 class="timeline__role">
               {e.role} <span class="muted">· {e.org}</span>
             </h3>
+            {e.support && (
+              <p class="timeline__support mono">
+                <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+                  <path fill="#f25022" d="M0 0h9v9H0z" />
+                  <path fill="#7fba00" d="M11 0h9v9h-9z" />
+                  <path fill="#00a4ef" d="M0 11h9v9H0z" />
+                  <path fill="#ffb900" d="M11 11h9v9h-9z" />
+                </svg>
+                <span>
+                  Connected with and supported by <strong>Microsoft</strong>.
+                </span>
+              </p>
+            )}
             {e.note && <p class="muted">{e.note}</p>}
           </div>
         </li>
@@ -268,8 +287,9 @@ const skills = [
         href="https://www.linkedin.com/in/matejteply/details/certifications/"
         rel="noopener"
         target="_blank"
+        data-glitch
       >
-        Over {certTotal} with credential IDs on LinkedIn
+        <GlitchText text={`Over ${certTotal} with credential IDs on LinkedIn`} />
       </a>
     </p>
   </section>
@@ -296,8 +316,9 @@ const skills = [
             href="https://majkey25.github.io/WeTheGods/"
             rel="noopener"
             target="_blank"
+            data-glitch
           >
-            WeTheGods
+            <GlitchText text="WeTheGods" />
           </a>
         </li>
         <li>
@@ -306,13 +327,14 @@ const skills = [
             href="https://open.spotify.com/artist/0t37G5AusfBBeHTv85jxj9"
             rel="noopener"
             target="_blank"
+            data-glitch
           >
-            Spotify
+            <GlitchText text="Spotify" />
           </a>
         </li>
         <li>
-          <a class="ext" href="https://www.exhalace.cz/" rel="noopener" target="_blank">
-            Exhalace
+          <a class="ext" href="https://www.exhalace.cz/" rel="noopener" target="_blank" data-glitch>
+            <GlitchText text="Exhalace" />
           </a>
         </li>
       </ul>
@@ -328,8 +350,8 @@ const skills = [
       <a class="mail__address" href={`mailto:${profile.email}`}>
         {profile.email}
       </a>
-      <button class="copy mono no-print" type="button" data-copy={profile.email} hidden>
-        copy
+      <button class="copy mono no-print" type="button" data-copy={profile.email} data-glitch hidden>
+        <GlitchText text="copy" />
       </button>
       <span class="copy__status mono muted" role="status" aria-live="polite"></span>
     </p>
@@ -497,6 +519,24 @@ const skills = [
   .timeline__role .muted {
     font-weight: 400;
     font-stretch: 100%;
+  }
+
+  .timeline__support {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-block: 0.4rem;
+    color: var(--muted);
+  }
+
+  .timeline__support svg {
+    flex: none;
+    align-self: center;
+  }
+
+  .timeline__support strong {
+    color: var(--ink);
+    font-weight: 550;
   }
 
   .row__num {

@@ -1,5 +1,6 @@
 ---
 import { Font } from 'astro:assets';
+import GlitchText from '../components/GlitchText.astro';
 import '../styles/global.css';
 import { href, profile } from '../site';
 
@@ -133,6 +134,7 @@ const person = {
       </div>
     )}
 
+    <div class="reading-progress no-print" aria-hidden="true"></div>
     <header class="header no-print">
       <div class="header__bar wrap">
         <a class="header__name" href={href()}>
@@ -145,12 +147,14 @@ const person = {
           <ul class="header__nav">
             {nav.map((n) => (
               <li>
-                <a href={n.href}>{n.label}</a>
+                <a href={n.href} data-glitch>
+                  <GlitchText text={n.label} />
+                </a>
               </li>
             ))}
           </ul>
         </nav>
-        <button class="theme" type="button" aria-pressed="false">
+        <button class="theme" type="button" aria-pressed="false" data-glitch>
           <span class="sr-only">Dark theme</span>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle class="theme__sun" cx="12" cy="12" r="4.5"></circle>
@@ -191,6 +195,8 @@ const person = {
     </footer>
 
     <script>
+      import '../scripts/interactions';
+
       const root = document.documentElement;
 
       // Theme: stored choice; the new theme opens as a circle from the button.

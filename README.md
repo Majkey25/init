@@ -17,7 +17,9 @@ Personal site of Matěj Teplý (Majkey), AI/ML engineer and backend developer:
 - Motion, all of it off under `prefers-reduced-motion`: the name decodes once per visit, content
   rises in, hovering a project quiets the others and splits its name for a moment, a soft light
   follows the pointer, project titles morph between the list and their page (cross-document view
-  transitions), and the theme switch opens as a circle from its button.
+  transitions), and the theme switch opens as a circle from its button. Buttons and primary links
+  briefly scramble with chromatic distortion and scan lines on hover or keyboard focus, and a thin
+  line tracks reading progress. Animated labels keep a stable width and accessible name.
 - Light and dark theme (follows the system, remembers a manual choice), a print stylesheet.
 
 ## Editing
