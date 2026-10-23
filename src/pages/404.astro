@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import GlitchText from '../components/GlitchText.astro';
 import { href } from '../site';
 ---
 
@@ -16,10 +17,14 @@ import { href } from '../site';
     </p>
     <ul class="inline-list" data-enter style="--i: 3">
       <li>
-        <a href={href()}>Home</a>
+        <a class="action-link" href={href()} data-glitch>
+          <GlitchText text="Home" />
+        </a>
       </li>
       <li>
-        <a href={href('work/')}>All projects</a>
+        <a class="action-link" href={href('work/')} data-glitch>
+          <GlitchText text="All projects" />
+        </a>
       </li>
     </ul>
   </section>

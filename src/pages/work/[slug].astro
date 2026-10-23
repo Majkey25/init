@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
+import GlitchText from '../../components/GlitchText.astro';
 import Base from '../../layouts/Base.astro';
 import { groups, href, slug } from '../../site';
 
@@ -89,8 +90,8 @@ const story = [
       <ul class="inline-list">
         {p.links.map((l) => (
           <li>
-            <a class="ext" href={l.href} rel="noopener" target="_blank">
-              {l.label}
+            <a class="action-link ext" href={l.href} rel="noopener" target="_blank" data-glitch>
+              <GlitchText text={l.label} />
             </a>
           </li>
         ))}

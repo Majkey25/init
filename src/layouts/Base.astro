@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import GlitchText from '../components/GlitchText.astro';
+import SocialIcon from '../components/SocialIcon.astro';
 import '../styles/global.css';
 import { href, profile } from '../site';
 
@@ -17,11 +18,12 @@ const site = Astro.site ?? new URL('https://majkey25.github.io');
 const url = (path: string) => new URL(path, site).href;
 const pageTitle = title
   ? `${title} · Matěj Teplý`
-  : 'Matěj Teplý: AI/ML engineer and backend developer';
+  : 'Matěj Teplý: applied AI, strategy and training';
 const pageDescription =
   description ??
-  'Matěj Teplý builds agentic RAG chatbots and AI agents in Python, plus Android apps, most of them private and offline-first, and web tools. Projects with measured results.';
+  'Matěj Teplý builds AI and software products, helps organizations plan and integrate AI, and teaches employees to use AI tools effectively and safely.';
 const nav = [
+  { href: href('#services'), label: 'AI' },
   { href: href('#work'), label: 'Work' },
   { href: href('#about'), label: 'About' },
   { href: href('#contact'), label: 'Contact' },
@@ -36,14 +38,22 @@ const person = {
   name: 'Matěj Teplý',
   alternateName: 'Majkey',
   url: url(href()),
-  jobTitle: 'Fullstack AI developer',
+  jobTitle: 'Technical Innovation Specialist | Applied AI/ML Engineer',
   description:
-    'AI/ML engineer and backend developer who builds agentic RAG systems and AI agents in Python, and ships private, offline-first Android apps and developer tools.',
+    'Technical generalist working across applied AI/ML, full-stack products, AI management, responsible adoption and practical employee training.',
   knowsAbout: [
+    'AI strategy and management',
+    'Enterprise AI integration',
+    'AI governance and safety',
+    'Employee AI training and tutoring',
     'Agentic RAG',
     'AI agents',
     'Context engineering',
     'Large language models',
+    'Small language model fine-tuning',
+    'Model evaluation',
+    'Computer vision and OCR',
+    'Audio machine learning',
     'Python',
     'Backend development',
     'Android development',
@@ -175,12 +185,15 @@ const person = {
     <footer class="footer wrap">
       <ul class="inline-list no-print">
         <li>
-          <a href={href('privacy/')}>Privacy</a>
+          <a class="action-link" href={href('privacy/')} data-glitch>
+            <GlitchText text="Privacy" />
+          </a>
         </li>
         {profile.socials.map((s) => (
           <li>
-            <a class="ext" href={s.href} rel="noopener me" target="_blank">
-              {s.label}
+            <a class="action-link ext" href={s.href} rel="noopener me" target="_blank" data-glitch>
+              <SocialIcon name={s.label} />
+              <GlitchText text={s.label} />
             </a>
           </li>
         ))}
@@ -188,8 +201,8 @@ const person = {
       <p class="mono muted">
         © {new Date().getFullYear()} Matěj Teplý · set in Mona Sans and Geist Mono · built with
         Astro ·{' '}
-        <a href="https://github.com/Majkey25/init" rel="noopener" target="_blank">
-          source
+        <a href="https://github.com/Majkey25/init" rel="noopener" target="_blank" data-glitch>
+          <GlitchText text="source" />
         </a>
       </p>
     </footer>
@@ -643,7 +656,7 @@ const person = {
   }
 
   /* Narrow phones: initials instead of the full name, which stays readable for screen readers. */
-  @media (width < 25rem) {
+  @media (width < 30rem) {
     .header__bar {
       gap: 0.25rem;
     }
