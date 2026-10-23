@@ -1,40 +1,35 @@
 ---
-import type { GetStaticPaths } from 'astro';
-import { getCollection } from 'astro:content';
-import GlitchText from '../../components/GlitchText.astro';
+import type { CollectionEntry } from 'astro:content';
+import GlitchText from '../GlitchText.astro';
 import Base from '../../layouts/Base.astro';
-import { groups, href, slug } from '../../site';
+import { href as siteHref, slug } from '../../site';
+import { projectText, groupLabels, ui, type Lang } from '../../i18n';
 
-// Pinned projects first, in pin order, then every other project that has a full story.
-export const getStaticPaths = (async () => {
-  const projects = (await getCollection('projects')).map((e) => e.data);
-  const pinned = projects
-    .filter((p) => p.featured)
-    .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
-  const cases = [
-    ...pinned,
-    ...projects.filter((p) => !p.featured && p.problem && p.approach && p.result),
-  ];
-  return cases.map((p, i) => ({
-    params: { slug: slug(p.name) },
-    props: { p, i, next: cases[(i + 1) % cases.length] },
-  }));
-}) satisfies GetStaticPaths;
-
-const { p, i, next } = Astro.props;
-const area = (x: typeof p) => x.featured?.area ?? groups[x.group];
+interface Props {
+  lang: Lang;
+  p: CollectionEntry<'projects'>['data'];
+  i: number;
+  next: CollectionEntry<'projects'>['data'];
+}
+const { i, lang } = Astro.props;
+const p = projectText(Astro.props.p, lang);
+const next = projectText(Astro.props.next, lang);
+const t = ui[lang];
+const href = (path = '') => siteHref(path, lang);
+const area = (x: typeof p) =>
+  (lang === 'en' ? x.featured?.area : undefined) ?? groupLabels[lang][x.group];
 const pad = (n: number) => String(n).padStart(2, '0');
 const story = [
-  { label: 'Problem', text: p.problem },
-  { label: 'Approach', text: p.approach },
-  { label: 'Result', text: p.result },
+  { label: t.story[0], text: p.problem },
+  { label: t.story[1], text: p.approach },
+  { label: t.story[2], text: p.result },
 ];
 ---
 
-<Base title={p.name} description={`${p.name}: ${p.kind}. ${p.problem}`}>
+<Base lang={lang} title={p.name} description={`${p.name}: ${p.kind}. ${p.problem}`}>
   <article class="case wrap">
     <p class="mono muted" data-enter style="--i: 0">
-      <a href={href()}>~</a> / <a href={href('#work')}>work</a> / {pad(i + 1)}
+      <a href={href()}>~</a> / <a href={href('#work')}>{t.work.toLowerCase()}</a> / {pad(i + 1)}
     </p>
     <h1 class="title" style={`view-transition-name: p-${slug(p.name)}`}>
       {p.name}
@@ -44,34 +39,34 @@ const story = [
     </p>
     <dl class="facts mono" data-enter style="--i: 2">
       <div>
-        <dt class="muted">area</dt>
+        <dt class="muted">{t.area}</dt>
         <dd>{area(p)}</dd>
       </div>
       <div>
-        <dt class="muted">stack</dt>
+        <dt class="muted">{t.stack}</dt>
         <dd>{p.stack.join(' · ')}</dd>
       </div>
       <div>
-        <dt class="muted">as of</dt>
+        <dt class="muted">{t.asOf}</dt>
         <dd>{p.as_of}</dd>
       </div>
       {p.formerly && (
         <div>
-          <dt class="muted">formerly</dt>
+          <dt class="muted">{t.formerly}</dt>
           <dd>{p.formerly}</dd>
         </div>
       )}
     </dl>
 
-    {story.map((s) => (
-      <section class="part" aria-labelledby={`${s.label}-title`} data-reveal>
-        <h2 id={`${s.label}-title`} class="label">
+    {story.map((s, index) => (
+      <section class="part" aria-labelledby={`story-${index}-title`} data-reveal>
+        <h2 id={`story-${index}-title`} class="label">
           {s.label}
         </h2>
         <p>{s.text}</p>
-        {s.label === 'Approach' && p.specimen && (
+        {index === 1 && p.specimen && (
           <figure class="specimen">
-            <figcaption class="mono muted">example</figcaption>
+            <figcaption class="mono muted">{t.example}</figcaption>
             <p lang="cs">
               <del>{p.specimen.before}</del>
             </p>
@@ -85,7 +80,7 @@ const story = [
 
     <section class="part" aria-labelledby="links-title" data-reveal>
       <h2 id="links-title" class="label">
-        Links
+        {t.links}
       </h2>
       <ul class="inline-list">
         {p.links.map((l) => (
@@ -95,15 +90,15 @@ const story = [
             </a>
           </li>
         ))}
-        {p.source === 'private' && <li class="mono muted">source private</li>}
+        {p.source === 'private' && <li class="mono muted">{t.privateSource}</li>}
       </ul>
     </section>
 
-    <nav class="next" aria-label="Next project">
+    <nav class="next" aria-label={t.nextProject}>
       <a class="row" href={href(`work/${slug(next.name)}/`)}>
         <span class="row__num">→</span>
         <span class="row__main">
-          <span class="mono muted">next</span>
+          <span class="mono muted">{t.next}</span>
           <span class="row__name" style={`view-transition-name: p-${slug(next.name)}`}>
             {next.name}
           </span>

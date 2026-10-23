@@ -3,7 +3,8 @@
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
 /** Path inside the site: href('work/') -> /init/work/ in production, /work/ locally. */
-export const href = (path = '') => `${base}${path}`;
+export const href = (path = '', lang: 'en' | 'cs' = 'en') =>
+  `${base}${lang === 'cs' ? 'cs/' : ''}${path}`;
 
 /** URL part of a project page: "Selia Weather" -> "selia-weather". */
 export const slug = (name: string) =>
