@@ -28,14 +28,20 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const status = cs
   ? [
       { key: 'nyní', value: 'LLM/RAG systémy a adaptace českých malých modelů v OKsystemu' },
-      { key: 'nabízím', value: 'AI strategie, integrace, kurzy pro zaměstnance a tutoring' },
+      {
+        key: 'nabízím',
+        value: 'AI strategie, integrace, kurzy pro zaměstnance, tutoring a vývoj webů',
+      },
       { key: 'tvořím', value: 'Android, web, počítačové vidění/OCR a audio ML' },
       { key: 'studium', value: 'Softwarové inženýrství, Univerzita Tomáše Bati ve Zlíně' },
       { key: 'hudba', value: 'Baskytara a doprovodný zpěv ve WeTheGods' },
     ]
   : [
       { key: 'now', value: 'LLM/RAG systems and Czech small-model adaptation at OKsystem' },
-      { key: 'offer', value: 'AI strategy, integration, employee courses and tutoring' },
+      {
+        key: 'offer',
+        value: 'AI strategy, integration, employee courses, tutoring and website development',
+      },
       { key: 'build', value: 'Android, web, computer vision/OCR and audio ML' },
       { key: 'study', value: 'Software engineering, Tomas Bata University in Zlín' },
       { key: 'music', value: 'Bass and backing vocals in WeTheGods' },
@@ -53,6 +59,10 @@ const services = cs
       {
         area: 'AI školení',
         text: 'Praktické kurzy, workshopy a individuální tutoring pro technické i netechnické zaměstnance. Učím efektivní zadávání promptů, každodenní postupy, ověřování výstupů a bezpečnou práci s firemními daty na příkladech z práce daného týmu.',
+      },
+      {
+        area: 'Vývoj webů',
+        text: 'Tvořím responzivní weby a webové aplikace. Propojuji uživatelské rozhraní s backendem a API a zajišťuji nasazení.',
       },
       {
         area: 'Výzkum a produkty',
@@ -75,6 +85,10 @@ const services = cs
       {
         area: 'AI training',
         text: "Hands-on courses, workshops and individual tutoring for technical and non-technical employees. Teach effective prompting, everyday workflows, output verification and safe handling of company data, using examples relevant to the team's work.",
+      },
+      {
+        area: 'Website development',
+        text: 'Build responsive websites and web applications. Connect user interfaces to backends and APIs, and deploy the finished site.',
       },
       {
         area: 'R&D and products',
@@ -341,7 +355,7 @@ const skills = cs
 
   <section id="services" class="section wrap" aria-labelledby="services-title">
     <h2 id="services-title" class="label">
-      {cs ? 'AI strategie, realizace a školení' : 'AI strategy, delivery and training'}
+      {cs ? 'AI služby a vývoj webů' : 'AI services and website development'}
     </h2>
     <p class="muted intro">
       {cs ? (
@@ -631,8 +645,8 @@ const skills = cs
     </p>
     <p class="muted intro">
       {cs
-        ? 'Nabízím AI strategii, integraci, praktické kurzy a tutoring pro zaměstnance i vývoj produktů. Napište mi o svém týmu a problému, který chcete vyřešit.'
-        : 'Available for AI strategy, integration, practical employee courses and tutoring, or product development. Tell me about your team and the problem you want to solve.'}
+        ? 'Nabízím AI strategii, integraci, praktické kurzy a tutoring pro zaměstnance, vývoj webů i produktů. Napište mi o svém týmu a problému, který chcete vyřešit.'
+        : 'Available for AI strategy, integration, practical employee courses and tutoring, website development, or product development. Tell me about your team and the problem you want to solve.'}
     </p>
     <ContactForm lang={lang} accessKey={profile.web3formsAccessKey} />
     <p class="mail">
