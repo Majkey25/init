@@ -201,7 +201,7 @@ const skills = [
       ))}
       <li>
         <a class="action-link" href={`mailto:${profile.email}`} data-glitch>
-          <GlitchText text={profile.email} />
+          <GlitchText text="Mail me" />
         </a>
       </li>
     </ul>
@@ -284,7 +284,24 @@ const skills = [
           <span class="row__num timeline__when">{e.when}</span>
           <div>
             <h3 class="timeline__role">
-              {e.role} <span class="muted">· {e.org}</span>
+              {e.role}{' '}
+              <span class="muted">
+                ·{' '}
+                {e.org === 'OKsystem' ? (
+                  <svg
+                    class="timeline__logo"
+                    viewBox="0 0 150 30"
+                    width="100"
+                    height="20"
+                    role="img"
+                    aria-label={e.org}
+                  >
+                    <use href={`${href('oksystem.svg')}#oksystem`} />
+                  </svg>
+                ) : (
+                  e.org
+                )}
+              </span>
             </h3>
             {e.support && (
               <p class="timeline__support mono">
@@ -295,7 +312,7 @@ const skills = [
                   <path fill="#ffb900" d="M11 11h9v9h-9z" />
                 </svg>
                 <span>
-                  Connected with and supported by <strong>Microsoft</strong>.
+                  Supported by <strong>Microsoft</strong>
                 </span>
               </p>
             )}
@@ -413,11 +430,17 @@ const skills = [
       development. Tell me about your team and the problem you want to solve.
     </p>
     <p class="mail">
-      <a class="action-link mail__address" href={`mailto:${profile.email}`} data-glitch>
-        <GlitchText text={profile.email} />
+      <a class="action-link" href={`mailto:${profile.email}`} data-glitch>
+        <GlitchText text="Mail me" />
       </a>
-      <button class="copy mono no-print" type="button" data-copy={profile.email} data-glitch hidden>
-        <GlitchText text="copy" />
+      <button
+        class="action-link no-print"
+        type="button"
+        data-copy={profile.email}
+        data-glitch
+        hidden
+      >
+        <GlitchText text="Copy email" />
       </button>
       <span class="copy__status mono muted" role="status" aria-live="polite"></span>
     </p>
@@ -580,6 +603,12 @@ const skills = [
     font-stretch: 100%;
   }
 
+  .timeline__logo {
+    display: inline-block;
+    vertical-align: middle;
+    fill: #009645;
+  }
+
   .timeline__support {
     display: flex;
     align-items: baseline;
@@ -660,24 +689,7 @@ const skills = [
     margin-top: 1.25rem;
   }
 
-  .mail__address {
-    font-size: clamp(1.4rem, 1rem + 2.2vw, 2.4rem);
-    font-weight: 650;
-    font-stretch: 115%;
-    letter-spacing: -0.02em;
-    overflow-wrap: anywhere;
-  }
-
-  .copy {
-    min-height: 2.25rem;
-    padding: 0.25rem 0.9rem;
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    background: none;
-    transition: border-color 0.2s var(--ease);
-  }
-
-  .copy:hover {
-    border-color: var(--muted);
+  [data-copy][hidden] {
+    display: none;
   }
 </style>
