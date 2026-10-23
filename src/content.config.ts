@@ -57,11 +57,21 @@ const projects = defineCollection({
       specimen: z.strictObject({ before: text, after: text }).optional(),
       result: text.optional(),
       as_of: text.optional(),
+      cs: z.strictObject({
+        kind: text,
+        problem: text.optional(),
+        approach: text.optional(),
+        result: text.optional(),
+        as_of: text.optional(),
+      }),
       links: z.array(z.strictObject({ label: text, href: z.url({ protocol: /^https$/ }) })).min(1),
     })
     // A case row on the home page needs the whole story.
     .refine((p) => !p.featured || (p.problem && p.approach && p.result && p.as_of), {
       error: 'Featured projects need problem, approach, result and as_of',
+    })
+    .refine((p) => !p.problem || (p.cs.problem && p.cs.approach && p.cs.result && p.cs.as_of), {
+      error: 'Case studies need a complete Czech translation',
     }),
 });
 

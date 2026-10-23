@@ -1,10 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
-import GlitchText from '../../components/GlitchText.astro';
+import GlitchText from '../GlitchText.astro';
 import Base from '../../layouts/Base.astro';
-import { groups, href, slug } from '../../site';
+import { href as siteHref, slug } from '../../site';
+import { projectText, groupLabels, ui, type Lang } from '../../i18n';
 
-const projects = (await getCollection('projects')).map((e) => e.data);
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const cs = lang === 'cs';
+const t = ui[lang];
+const groups = groupLabels[lang];
+const href = (path = '') => siteHref(path, lang);
+const projects = (await getCollection('projects')).map((e) => projectText(e.data, lang));
 const sections = (Object.keys(groups) as (keyof typeof groups)[])
   .map((key) => ({ key, title: groups[key], list: projects.filter((p) => p.group === key) }))
   .filter((s) => s.list.length > 0);
@@ -13,21 +22,37 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
 ---
 
 <Base
-  title="All projects"
-  description="Public projects by Matěj Teplý, grouped: AI and language, developer tools, web, Android apps and browser extensions."
+  lang={lang}
+  title={t.allProjects}
+  description={
+    cs
+      ? 'Veřejné projekty Matěje Teplého: AI a jazyk, vývojářské nástroje, web, Android a rozšíření prohlížeče.'
+      : 'Public projects by Matěj Teplý, grouped: AI and language, developer tools, web, Android apps and browser extensions.'
+  }
 >
   <section class="head wrap" aria-labelledby="work-title">
     <p class="mono muted" data-enter style="--i: 0">
-      <a href={href()}>~</a> / work
+      <a href={href()}>~</a> / {t.work.toLowerCase()}
     </p>
     <h1 id="work-title" class="title" data-enter style="--i: 1">
-      All projects <span class="muted">({projects.length})</span>
+      {t.allProjects} <span class="muted">({projects.length})</span>
     </h1>
     <p class="lead" data-enter style="--i: 2">
-      Public projects, grouped by what they are. Private sources are marked; the {cases} marked ↳
-      have a full case study, and the <a href={href('#work')}>pinned ones</a> lead the home page.
+      {cs ? (
+        <>
+          Veřejné projekty podle zaměření. Neveřejné zdrojové kódy jsou označené. U {cases} projektů
+          se značkou ↳ je celá případová studie a <a href={href('#work')}>vybrané projekty</a>{' '}
+          najdete na úvodní stránce.
+        </>
+      ) : (
+        <>
+          Public projects, grouped by what they are. Private sources are marked; the {cases} marked
+          ↳ have a full case study, and the <a href={href('#work')}>pinned ones</a> lead the home
+          page.
+        </>
+      )}
     </p>
-    <nav aria-label="Groups" data-enter style="--i: 3">
+    <nav aria-label={t.groups} data-enter style="--i: 3">
       <ul class="inline-list">
         {sections.map((s) => (
           <li>
@@ -57,7 +82,7 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
                   </span>
                   <span class="row__kind">{p.kind}</span>
                 </span>
-                <span class="row__meta">case study</span>
+                <span class="row__meta">{t.caseStudy}</span>
               </a>
             ) : (
               <div class="row">
@@ -65,7 +90,12 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
                 <span class="row__main">
                   <span class="row__name">
                     {p.name}
-                    {p.formerly && <span class="muted mono"> formerly {p.formerly}</span>}
+                    {p.formerly && (
+                      <span class="muted mono">
+                        {' '}
+                        {t.formerly} {p.formerly}
+                      </span>
+                    )}
                   </span>
                   <span class="row__kind">{p.kind}</span>
                   <span class="mono muted">{p.stack.join(' · ')}</span>
@@ -83,7 +113,7 @@ const cases = projects.filter((p) => p.problem && p.approach && p.result).length
                       <span class="sr-only"> · {p.name}</span>
                     </a>
                   ))}
-                  {p.source === 'private' && <span>source private</span>}
+                  {p.source === 'private' && <span>{t.privateSource}</span>}
                 </span>
               </div>
             )}

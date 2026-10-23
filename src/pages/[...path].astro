@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import Home from '../components/pages/Home.astro';
+import Work from '../components/pages/Work.astro';
+import CaseStudy from '../components/pages/CaseStudy.astro';
+import Privacy from '../components/pages/Privacy.astro';
+import { languages, type Lang } from '../i18n';
+import { slug } from '../site';
+
+type Project = CollectionEntry<'projects'>['data'];
+type Props = { lang: Lang } & (
+  { page: 'home' | 'work' | 'privacy' } | { page: 'case'; p: Project; i: number; next: Project }
+);
+
+export const getStaticPaths = async () => {
+  const projects = (await getCollection('projects')).map((e) => e.data);
+  const pinned = projects
+    .filter((p) => p.featured)
+    .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
+  const cases = [
+    ...pinned,
+    ...projects.filter((p) => !p.featured && p.problem && p.approach && p.result),
+  ];
+  const routes: { params: { path: string | undefined }; props: Props }[] = [];
+  for (const lang of languages) {
+    const prefix = lang === 'cs' ? 'cs/' : '';
+    routes.push(
+      { params: { path: prefix || undefined }, props: { lang, page: 'home' } },
+      { params: { path: `${prefix}work` }, props: { lang, page: 'work' } },
+      { params: { path: `${prefix}privacy` }, props: { lang, page: 'privacy' } },
+      ...cases.map((p, i) => ({
+        params: { path: `${prefix}work/${slug(p.name)}` },
+        props: { lang, page: 'case' as const, p, i, next: cases[(i + 1) % cases.length] },
+      })),
+    );
+  }
+  return routes;
+};
+
+const props = Astro.props;
+---
+
+{props.page === 'home' && <Home lang={props.lang} />}
+{props.page === 'work' && <Work lang={props.lang} />}
+{props.page === 'privacy' && <Privacy lang={props.lang} />}
+{props.page === 'case' && <CaseStudy lang={props.lang} p={props.p} i={props.i} next={props.next} />}
