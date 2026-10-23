@@ -37,6 +37,7 @@ jobs:
       - run: npm run check
       - run: npm run test:fonts
       - run: npm run build
+      - run: npm run test:contacts
       # Lighthouse on the built site; fails on accessibility, SEO or best-practice regressions
       # and on a performance score below 0.8 (shared runners are noisy, so the bar sits lower).
       - run: npm run lighthouse
