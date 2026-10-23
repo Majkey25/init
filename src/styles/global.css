@@ -373,6 +373,7 @@ a.row:focus-visible {
   position: relative;
   display: inline-grid;
   white-space: pre-wrap;
+  overflow: clip;
 }
 
 /* This invisible copy reserves the original width, even while glyphs change. */
