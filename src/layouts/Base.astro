@@ -239,7 +239,7 @@ const person = {
       updateLanguageLinks();
       addEventListener('hashchange', updateLanguageLinks);
 
-      // Each switch randomly picks the smooth reveal or the WeTheGods surge.
+      // Reveal the new theme as a smooth circle from the button.
       const button = document.querySelector<HTMLButtonElement>('.theme');
       const meta = document.querySelector('meta[name="theme-color"]');
       const set = (theme: string) => {
@@ -275,29 +275,23 @@ const person = {
         const x = box.left + box.width / 2;
         const y = box.top + box.height / 2;
         const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-        const glitch = Math.random() < 0.5;
-        root.style.setProperty('--vt-x', `${x}px`);
-        root.style.setProperty('--vt-y', `${y}px`);
-        root.style.setProperty('--vt-r', `${r}px`);
         root.classList.add('theme-switch');
-        root.classList.toggle('theme-switch--glitch', glitch);
         const vt = document.startViewTransition(apply);
         try {
           await vt.ready;
-          if (!glitch)
-            root.animate(
-              { clipPath: [`circle(0 at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-              {
-                duration: 560,
-                easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
-                pseudoElement: '::view-transition-new(root)',
-              },
-            );
+          root.animate(
+            { clipPath: [`circle(0 at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+            {
+              duration: 560,
+              easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
+              pseudoElement: '::view-transition-new(root)',
+            },
+          );
         } catch {
           // A skipped transition still applies the selected theme.
         } finally {
           await vt.finished;
-          root.classList.remove('theme-switch', 'theme-switch--glitch');
+          root.classList.remove('theme-switch');
         }
       });
 

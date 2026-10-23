@@ -583,68 +583,6 @@ html.theme-switch::view-transition-new(root) {
   mix-blend-mode: normal;
 }
 
-html.theme-switch--glitch::view-transition-old(root) {
-  animation: vt-tear 0.8s steps(1) both;
-}
-
-html.theme-switch--glitch::view-transition-new(root) {
-  animation: vt-surge 0.8s both;
-}
-
-@keyframes vt-surge {
-  0% {
-    clip-path: circle(0 at var(--vt-x) var(--vt-y));
-    transform: none;
-    animation-timing-function: steps(2);
-  }
-  16% {
-    clip-path: circle(calc(var(--vt-r) * 0.16) at var(--vt-x) var(--vt-y));
-    transform: translateX(-6px);
-    animation-timing-function: steps(2);
-  }
-  28% {
-    clip-path: circle(calc(var(--vt-r) * 0.08) at var(--vt-x) var(--vt-y));
-    transform: translateX(5px);
-    animation-timing-function: steps(2);
-  }
-  40% {
-    clip-path: circle(calc(var(--vt-r) * 0.24) at var(--vt-x) var(--vt-y));
-    transform: translateX(-3px);
-    animation-timing-function: steps(2);
-  }
-  52% {
-    clip-path: circle(calc(var(--vt-r) * 0.18) at var(--vt-x) var(--vt-y));
-    transform: none;
-    animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
-  }
-  100% {
-    clip-path: circle(var(--vt-r) at var(--vt-x) var(--vt-y));
-    transform: none;
-  }
-}
-
-@keyframes vt-tear {
-  0% {
-    transform: none;
-  }
-  16% {
-    transform: translateX(9px) skewX(-2deg);
-  }
-  28% {
-    transform: translateX(-11px);
-  }
-  40% {
-    transform: translateX(5px) skewX(1deg);
-  }
-  52% {
-    transform: translateX(-2px);
-  }
-  70%,
-  100% {
-    transform: scale(0.97);
-  }
-}
-
 @media (width < 48rem) {
   html {
     scroll-padding-top: 8rem;
