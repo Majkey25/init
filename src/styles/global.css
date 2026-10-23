@@ -447,7 +447,7 @@ button[data-glitch]:is(:hover, :focus-visible),
 
   /* Load: children rise out of a soft blur, one after another. */
   [data-enter] {
-    animation: enter 0.6s var(--ease) both;
+    animation: enter 0.35s var(--ease) both;
     animation-delay: calc(var(--i, 0) * 80ms);
   }
 
