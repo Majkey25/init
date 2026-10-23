@@ -7,6 +7,7 @@ import utbLogo from '../../assets/brands/utb.png';
 import GlitchText from '../../components/GlitchText.astro';
 import SocialIcon from '../../components/SocialIcon.astro';
 import ContactLink from '../ContactLink.astro';
+import ContactForm from '../ContactForm.astro';
 import Base from '../../layouts/Base.astro';
 import { href as siteHref, profile, slug } from '../../site';
 import { projectText, groupLabels, ui, type Lang } from '../../i18n';
@@ -633,6 +634,7 @@ const skills = cs
         ? 'Nabízím AI strategii, integraci, praktické kurzy a tutoring pro zaměstnance i vývoj produktů. Napište mi o svém týmu a problému, který chcete vyřešit.'
         : 'Available for AI strategy, integration, practical employee courses and tutoring, or product development. Tell me about your team and the problem you want to solve.'}
     </p>
+    <ContactForm lang={lang} accessKey={profile.web3formsAccessKey} />
     <p class="mail">
       <ContactLink class="action-link" value={profile.email} lang={lang} glitch>
         <GlitchText text={t.mail} />

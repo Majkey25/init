@@ -1,0 +1,229 @@
+---
+import type { Lang } from '../i18n';
+import { href } from '../site';
+import GlitchText from './GlitchText.astro';
+
+interface Props {
+  lang: Lang;
+  accessKey: string;
+}
+const { lang, accessKey } = Astro.props;
+const text =
+  lang === 'cs'
+    ? {
+        title: 'Napište mi',
+        name: 'Jméno, nepovinné',
+        email: 'Váš e-mail',
+        topic: 'Téma',
+        topics: ['AI strategie a integrace', 'AI kurzy a školení', 'Vývoj softwaru', 'Něco jiného'],
+        message: 'Zpráva',
+        send: 'Odeslat zprávu',
+        sending: 'Odesílám…',
+        sent: 'Děkuji. Zpráva byla přijata.',
+        error:
+          'Odeslání se nepodařilo potvrdit. Zpráva zůstala ve formuláři. Neodesílejte ji hned znovu; můžete mi napsat přímo e-mailem.',
+        privacy:
+          'Váš e-mail, zprávu, téma a případné jméno předá Web3Forms do mé schránky. Neposílejte citlivé údaje.',
+        privacyLink: 'Jak zpracovávám údaje',
+        noScript: 'Pro formulář povolte JavaScript nebo použijte e-mail uvedený níže.',
+      }
+    : {
+        title: 'Send a message',
+        name: 'Name, optional',
+        email: 'Your email',
+        topic: 'Topic',
+        topics: [
+          'AI strategy and integration',
+          'AI courses and training',
+          'Software development',
+          'Something else',
+        ],
+        message: 'Message',
+        send: 'Send message',
+        sending: 'Sending…',
+        sent: 'Thank you. Your message was received.',
+        error:
+          'We could not confirm sending. Your message is still in the form. Avoid sending it again immediately; you can email me directly.',
+        privacy:
+          'Web3Forms forwards your email, message, topic and optional name to my inbox. Do not send sensitive information.',
+        privacyLink: 'How I process your data',
+        noScript: 'Enable JavaScript for the form or use the email shown below.',
+      };
+---
+
+<form
+  class="contact-form"
+  action="https://api.web3forms.com/submit"
+  method="POST"
+  data-contact-form
+  data-sending={text.sending}
+  data-sent={text.sent}
+  data-error={text.error}
+  inert
+>
+  <h3>{text.title}</h3>
+  <fieldset>
+    <div class="form-row">
+      <label>
+        <span>{text.name}</span>
+        <input name="name" autocomplete="name" maxlength="100" />
+      </label>
+      <label>
+        <span>{text.email}</span>
+        <input type="email" name="email" autocomplete="email" required maxlength="200" />
+      </label>
+    </div>
+    <label>
+      <span>{text.topic}</span>
+      <select name="topic">
+        {text.topics.map((topic) => (
+          <option>{topic}</option>
+        ))}
+      </select>
+    </label>
+    <label>
+      <span>{text.message}</span>
+      <textarea name="message" rows="6" required maxlength="5000"></textarea>
+    </label>
+  </fieldset>
+  <input
+    type="checkbox"
+    name="botcheck"
+    hidden
+    tabindex="-1"
+    autocomplete="off"
+    aria-hidden="true"
+  />
+  <input type="hidden" name="access_key" value={accessKey} />
+  <input type="hidden" name="subject" value="Matěj Teplý · init" />
+  <button class="action-link" type="submit" data-glitch>
+    <GlitchText text={text.send} />
+  </button>
+  <p class="form-note muted">
+    {text.privacy} <a href={href('privacy/', lang)}>{text.privacyLink}</a>
+  </p>
+  <p class="form-status" role="status" aria-live="polite"></p>
+</form>
+<noscript>
+  <p class="form-note muted">{text.noScript}</p>
+</noscript>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const status = form?.querySelector<HTMLElement>('[role="status"]');
+  const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const fields = form?.querySelector('fieldset');
+  if (form && status && button && fields) {
+    form.inert = false;
+    let submitting = false;
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (submitting || !form.reportValidity()) return;
+      const data = Object.fromEntries(new FormData(form));
+      const say = (message: string, error: boolean) => {
+        status.textContent = message;
+        status.classList.toggle('is-error', error);
+      };
+      if (data.botcheck) return say(form.dataset.error ?? '', true);
+      data.subject = `Matěj Teplý · init — ${data.topic}: ${data.name}`;
+      const controller = new AbortController();
+      const deadline = setTimeout(() => controller.abort(), 60_000);
+      submitting = true;
+      fields.disabled = true;
+      form.setAttribute('aria-busy', 'true');
+      button.setAttribute('aria-disabled', 'true');
+      say(form.dataset.sending ?? '', false);
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          credentials: 'omit',
+          redirect: 'error',
+          body: JSON.stringify(data),
+          signal: controller.signal,
+        });
+        const body: unknown = await response.json();
+        if (
+          !response.ok ||
+          !body ||
+          typeof body !== 'object' ||
+          !('success' in body) ||
+          body.success !== true
+        )
+          throw new Error(`status ${response.status}`);
+        form.reset();
+        say(form.dataset.sent ?? '', false);
+      } catch {
+        say(form.dataset.error ?? '', true);
+      } finally {
+        clearTimeout(deadline);
+        submitting = false;
+        fields.disabled = false;
+        form.removeAttribute('aria-busy');
+        button.removeAttribute('aria-disabled');
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: 1.25rem;
+    margin-block: 2rem;
+  }
+  .contact-form h3 {
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    font-weight: 600;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+  fieldset {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+  label {
+    display: grid;
+    gap: 0.5rem;
+  }
+  label input,
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.4rem;
+    color: var(--ink);
+    background: var(--surface);
+    font: inherit;
+  }
+  textarea {
+    resize: vertical;
+  }
+  button {
+    justify-self: start;
+  }
+  .form-note {
+    font-size: 0.85rem;
+  }
+  .form-status {
+    min-height: 1.65em;
+  }
+  .form-status.is-error {
+    padding-left: 1rem;
+    border-left: 2px solid var(--accent);
+  }
+  @media (width <= 30rem) {
+    .form-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

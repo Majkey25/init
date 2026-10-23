@@ -47,3 +47,25 @@ test('built pages and scripts do not expose contacts before activation', async (
       assert(!/href=["'](?:mailto|tel):/i.test(text), `${file}: initial contact URI exposed`);
   }
 });
+
+test('both home pages ship a configured contact form', async () => {
+  for (const path of ['index.html', 'cs/index.html']) {
+    const html = await readFile(new URL(`../dist/${path}`, import.meta.url), 'utf8');
+    const form = /<form\b([^>]*\bdata-contact-form\b[^>]*)>([\s\S]*?)<\/form>/.exec(html);
+    assert(form, `${path}: contact form missing`);
+    assert(form[1].includes('action="https://api.web3forms.com/submit"'));
+    const key = /<input[^>]*name="access_key"[^>]*value="([^"]+)"/.exec(form[2])?.[1];
+    assert(
+      key &&
+        /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(key) &&
+        key !== '00000000-0000-0000-0000-000000000000',
+      `${path}: configure the recipient's Web3Forms access key before publication`,
+    );
+    for (const name of ['email', 'message']) {
+      assert(
+        new RegExp(`<[^>]*name="${name}"[^>]*required`).test(form[2]),
+        `${path}: ${name} must be required`,
+      );
+    }
+  }
+});

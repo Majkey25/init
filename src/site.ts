@@ -17,6 +17,7 @@ export const slug = (name: string) =>
 
 export const profile = {
   email: 'majkeylab@gmail.com',
+  web3formsAccessKey: '76152ab0-19d3-4ab4-b904-db44803a9c51',
   socials: [
     { label: 'GitHub', href: 'https://github.com/Majkey25' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/matejteply/' },
