@@ -6,6 +6,7 @@ import stcLogo from '../../assets/brands/stc.png';
 import utbLogo from '../../assets/brands/utb.png';
 import GlitchText from '../../components/GlitchText.astro';
 import SocialIcon from '../../components/SocialIcon.astro';
+import ContactLink from '../ContactLink.astro';
 import Base from '../../layouts/Base.astro';
 import { href as siteHref, profile, slug } from '../../site';
 import { projectText, groupLabels, ui, type Lang } from '../../i18n';
@@ -330,9 +331,9 @@ const skills = cs
         </li>
       ))}
       <li>
-        <a class="action-link" href={`mailto:${profile.email}`} data-glitch>
+        <ContactLink class="action-link" value={profile.email} lang={lang} glitch>
           <GlitchText text={t.mail} />
-        </a>
+        </ContactLink>
       </li>
     </ul>
   </section>
@@ -633,21 +634,21 @@ const skills = cs
         : 'Available for AI strategy, integration, practical employee courses and tutoring, or product development. Tell me about your team and the problem you want to solve.'}
     </p>
     <p class="mail">
-      <a class="action-link" href={`mailto:${profile.email}`} data-glitch>
+      <ContactLink class="action-link" value={profile.email} lang={lang} glitch>
         <GlitchText text={t.mail} />
-      </a>
-      <button
+      </ContactLink>
+      <ContactLink class="action-link" value={profile.email} lang={lang} action="reveal" glitch>
+        <GlitchText text={cs ? 'Zobrazit e-mail' : 'Show email'} />
+      </ContactLink>
+      <ContactLink
         class="action-link no-print"
-        type="button"
-        data-copy={profile.email}
-        data-copied={t.copied}
-        data-copy-error={t.copyError}
-        data-glitch
-        hidden
+        value={profile.email}
+        lang={lang}
+        action="copy"
+        glitch
       >
         <GlitchText text={t.copy} />
-      </button>
-      <span class="copy__status mono muted" role="status" aria-live="polite"></span>
+      </ContactLink>
     </p>
   </section>
 </Base>
@@ -696,27 +697,6 @@ const skills = cs
     if (document.documentElement.classList.contains('booting'))
       document.addEventListener('init:booted', play, { once: true });
     else play();
-  }
-
-  // Copy the e-mail address; the mailto link stays for everyone without clipboard access.
-  const button = document.querySelector<HTMLButtonElement>('[data-copy]');
-  const status = document.querySelector('.copy__status');
-  if (button && status && navigator.clipboard) {
-    let timeout: ReturnType<typeof setTimeout>;
-    button.hidden = false;
-    button.addEventListener('click', async () => {
-      clearTimeout(timeout);
-      button.disabled = true;
-      try {
-        await navigator.clipboard.writeText(button.dataset.copy!);
-        status.textContent = button.dataset.copied!;
-      } catch {
-        status.textContent = button.dataset.copyError!;
-      } finally {
-        button.disabled = false;
-        timeout = setTimeout(() => (status.textContent = ''), 2000);
-      }
-    });
   }
 </script>
 
@@ -933,18 +913,8 @@ const skills = cs
     margin-top: 1.25rem;
   }
 
-  [data-copy][hidden] {
-    display: none;
-  }
-
   .mail :global([data-glitch-text]) {
     white-space: nowrap;
     text-align: start;
-  }
-
-  .copy__status {
-    flex-basis: 100%;
-    min-height: 2.8em;
-    line-height: 1.4;
   }
 </style>

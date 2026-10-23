@@ -35,8 +35,6 @@ export const ui = {
     next: 'next',
     mail: 'Mail me',
     copy: 'Copy email',
-    copied: 'Email copied',
-    copyError: 'Copy blocked. Use Mail me.',
   },
   cs: {
     work: 'Projekty',
@@ -68,8 +66,6 @@ export const ui = {
     next: 'další',
     mail: 'Napsat e-mail',
     copy: 'Kopírovat e-mail',
-    copied: 'E-mail zkopírován',
-    copyError: 'Kopírování je blokováno. Použijte odkaz.',
   },
 };
 
