@@ -22,7 +22,10 @@ for (const family of config.fonts) {
       options: family.options,
     };
     const { fonts } = await family.provider.resolveFont(request);
-    assert.deepEqual(fonts.map((font) => font.meta.subset).sort(), ['latin', 'latin-ext']);
+    assert.deepEqual(
+      fonts.map((font) => font.meta.subset),
+      ['latin', 'latin-ext'],
+    );
     for (const font of fonts) {
       for (const source of font.src) {
         assert.ok(isAbsolute(source.url));
