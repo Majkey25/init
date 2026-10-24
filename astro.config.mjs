@@ -27,6 +27,12 @@ function localFontsource() {
       if (fonts.length !== options.subsets.length) {
         throw new Error(`Missing installed font subsets: ${options.familyName}`);
       }
+      // Astro caches fallback metrics from the first subset; Latin has the sizing glyphs.
+      fonts.sort(
+        (a, b) =>
+          options.subsets.indexOf(a.meta?.subset ?? '') -
+          options.subsets.indexOf(b.meta?.subset ?? ''),
+      );
       return { ...result, fonts };
     },
   };
@@ -37,6 +43,7 @@ function localFontsource() {
 export default defineConfig({
   site: 'https://majkey25.github.io',
   compressHTML: true,
+  experimental: { parallelPrerender: { workers: 2 } },
   build: { inlineStylesheets: 'always' },
   fonts: [
     {
