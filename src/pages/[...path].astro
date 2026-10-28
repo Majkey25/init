@@ -1,10 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
 import Home from '../components/pages/Home.astro';
 import Work from '../components/pages/Work.astro';
 import CaseStudy from '../components/pages/CaseStudy.astro';
 import Privacy from '../components/pages/Privacy.astro';
+import { getCases } from '../cases';
 import { languages, type Lang } from '../i18n';
 import { slug } from '../site';
 
@@ -14,14 +14,7 @@ type Props = { lang: Lang } & (
 );
 
 export const getStaticPaths = async () => {
-  const projects = (await getCollection('projects')).map((e) => e.data);
-  const pinned = projects
-    .filter((p) => p.featured)
-    .sort((a, b) => (a.featured?.order ?? 0) - (b.featured?.order ?? 0));
-  const cases = [
-    ...pinned,
-    ...projects.filter((p) => !p.featured && p.problem && p.approach && p.result),
-  ];
+  const cases = await getCases();
   const routes: { params: { path: string | undefined }; props: Props }[] = [];
   for (const lang of languages) {
     const prefix = lang === 'cs' ? 'cs/' : '';

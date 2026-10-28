@@ -19,7 +19,7 @@ export const ui = {
     problem: 'problem',
     title: 'Matěj Teplý: applied AI, strategy and training',
     description:
-      'Matěj Teplý builds AI and software products, helps organizations plan and integrate AI, and teaches employees to use AI tools effectively and safely.',
+      'Matěj Teplý, AI/ML engineer and backend developer in Zlín. Builds AI and software products, helps organizations adopt AI and trains employees to use it safely.',
     allProjects: 'All projects',
     groups: 'Groups',
     caseStudy: 'case study',
@@ -50,7 +50,7 @@ export const ui = {
     problem: 'problém',
     title: 'Matěj Teplý: aplikovaná AI, strategie a školení',
     description:
-      'Matěj Teplý vyvíjí AI a software, pomáhá firmám plánovat a zavádět AI a učí zaměstnance používat AI nástroje efektivně a bezpečně.',
+      'Matěj Teplý, AI/ML engineer a backend vývojář ze Zlína. Vyvíjí AI a software, pomáhá firmám zavádět AI a učí zaměstnance používat ji bezpečně.',
     allProjects: 'Všechny projekty',
     groups: 'Kategorie',
     caseStudy: 'případová studie',

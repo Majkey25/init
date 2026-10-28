@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://majkey25.github.io/init/sitemap.xml

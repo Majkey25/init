@@ -26,7 +26,11 @@ const story = [
 ];
 ---
 
-<Base lang={lang} title={p.name} description={`${p.name}: ${p.kind}. ${p.problem}`}>
+<Base
+  lang={lang}
+  title={`${p.name}: ${t.caseStudy}`}
+  description={`${p.name}: ${p.kind}. ${p.problem}`}
+>
   <article class="case wrap">
     <p class="mono muted" data-enter style="--i: 0">
       <a href={href()}>~</a> / <a href={href('#work')}>{t.work.toLowerCase()}</a> / {pad(i + 1)}
