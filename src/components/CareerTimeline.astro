@@ -1,0 +1,245 @@
+---
+import { Image } from 'astro:assets';
+import Arrow from './Arrow.astro';
+import schoolLogo from '../assets/brands/spszl.png';
+import stcLogo from '../assets/brands/stc.png';
+import utbLogo from '../assets/brands/utb.png';
+import oksystemLogo from '../assets/brands/oksystem.png';
+import { careerRange, careerWindow, getExperience } from '../data/career';
+import { href } from '../site';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const cs = lang === 'cs';
+const title = cs ? 'Moje cesta v kostce' : 'My path at a glance';
+const rows = getExperience(lang);
+const logos = { school: schoolLogo, stc: stcLogo, utb: utbLogo };
+const years = Array.from(
+  { length: careerWindow.end - careerWindow.start + 1 },
+  (_, i) => careerWindow.start + i,
+);
+---
+
+<section id="career" class="section frame career" aria-labelledby="career-title">
+  <div class="career__heading">
+    <h2 id="career-title" class="label">
+      {title}
+    </h2>
+    <a class="action-link" href={href('about/', lang)}>
+      {cs ? 'Více o mně' : 'More about me'} <Arrow />
+    </a>
+  </div>
+  <div class="career__years" aria-hidden="true">
+    {years.map((year) => (
+      <span>{year}</span>
+    ))}
+  </div>
+  <ol class="career__rows">
+    {rows.map((row) => {
+      const range = careerRange(row.start, row.end);
+      const logo = row.logo ? logos[row.logo] : row.org === 'OKsystem' ? oksystemLogo : null;
+      return (
+        <li
+          class:list={{ 'career__row--ongoing': row.end === null }}
+          style={`--start:${range.start}%;--duration:${range.duration}%`}
+        >
+          <div class="career__identity">
+            <span class:list={['career__mark', { 'career__mark--school': row.logo === 'school' }]}>
+              {logo && (
+                <Image
+                  src={logo}
+                  width={28}
+                  height={28}
+                  densities={[1, 2, 3]}
+                  format="webp"
+                  alt=""
+                  loading="lazy"
+                />
+              )}
+            </span>
+            <div>
+              <h3>{row.label}</h3>
+              <p class="muted">{row.when}</p>
+              {row.support && (
+                <p class="career__support muted">
+                  <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true">
+                    <path fill="#f25022" d="M0 0h9v9H0z" />
+                    <path fill="#7fba00" d="M11 0h9v9h-9z" />
+                    <path fill="#00a4ef" d="M0 11h9v9H0z" />
+                    <path fill="#ffb900" d="M11 11h9v9h-9z" />
+                  </svg>
+                  {cs ? 'S podporou Microsoftu' : 'Supported by Microsoft'}
+                </p>
+              )}
+            </div>
+          </div>
+          <div class="career__track" aria-hidden="true">
+            <span class="career__bar">{row.end === null && <Arrow />}</span>
+          </div>
+        </li>
+      );
+    })}
+  </ol>
+</section>
+
+<script>
+  import { onPage } from '../scripts/page';
+
+  onPage(() => {
+    // Keep rows already on screen finished, including restored scroll positions.
+    const pending = [...document.querySelectorAll<HTMLElement>('.career__rows > li')].filter(
+      (row) => row.getBoundingClientRect().top >= innerHeight,
+    );
+    if (!pending.length) return;
+    const grow = new IntersectionObserver(
+      (entries) => {
+        let order = 0;
+        for (const { target, isIntersecting } of entries) {
+          if (!isIntersecting) continue;
+          const row = target as HTMLElement;
+          row.style.setProperty('--order', String(order++));
+          row.dataset.grow = 'shown';
+          grow.unobserve(row);
+        }
+      },
+      { rootMargin: '0px 0px -15% 0px' },
+    );
+    for (const row of pending) {
+      row.dataset.grow = 'pending';
+      grow.observe(row);
+    }
+    return () => grow.disconnect();
+  });
+</script>
+
+<style>
+  .career {
+    --label-width: 24rem;
+  }
+  .career__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .career__heading .label {
+    margin: 0;
+  }
+  .career__years {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 1.25rem calc(var(--label-width) + 2rem);
+    color: var(--muted);
+    font-size: 0.8125rem;
+  }
+  .career__rows {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .career__rows li {
+    display: grid;
+    grid-template-columns: var(--label-width) minmax(0, 1fr);
+    gap: 1rem 2rem;
+    align-items: center;
+  }
+  .career__identity {
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+  }
+  .career__mark {
+    width: 1.75rem;
+    min-height: 1.75rem;
+  }
+  .career__mark img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media screen {
+    :global([data-theme='dark']) .career__mark--school,
+    :global([data-theme='matrix']) .career__mark--school {
+      filter: invert(1);
+    }
+  }
+  .career h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .career p {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  .career__support {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .career__support svg {
+    flex: none;
+  }
+  .career__track {
+    height: 0.75rem;
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .career__bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: var(--start);
+    width: var(--duration);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--muted);
+  }
+  .career__row--ongoing .career__bar {
+    background: var(--accent);
+  }
+  .career__bar :global(svg) {
+    width: 0.75rem;
+    height: 0.75rem;
+    color: var(--bg);
+  }
+  @media screen and (prefers-reduced-motion: no-preference) {
+    .career__rows li[data-grow] .career__bar {
+      transform-origin: left center;
+      transition: scale 600ms var(--ease) calc(var(--order, 0) * 70ms);
+    }
+    .career__rows li[data-grow='pending'] .career__bar {
+      scale: 0 1;
+    }
+    .career__rows li[data-grow] .career__bar :global(svg) {
+      transition: opacity 150ms var(--ease) calc(var(--order, 0) * 70ms + 450ms);
+    }
+    .career__rows li[data-grow='pending'] .career__bar :global(svg) {
+      opacity: 0;
+    }
+  }
+  @media (width < 64rem) {
+    .career {
+      --label-width: 20rem;
+    }
+  }
+  @media (width < 48rem) {
+    .career__years {
+      margin-left: 0;
+    }
+    .career__years span:nth-child(even) {
+      display: none;
+    }
+    .career__rows li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+    .career__rows {
+      gap: 1.75rem;
+    }
+  }
+</style>

@@ -5,6 +5,7 @@ import portrait from '../../assets/matej-teply.png';
 import Arrow from '../Arrow.astro';
 import GlitchText from '../GlitchText.astro';
 import Workbench from '../Workbench.astro';
+import CareerTimeline from '../CareerTimeline.astro';
 import Base from '../../layouts/Base.astro';
 import { chat, starters } from '../../chat';
 import { href as siteHref, slug } from '../../site';
@@ -121,6 +122,8 @@ const pages = [
     )}
   </section>
 
+  <CareerTimeline lang={lang} />
+
   <section id="work" class="section frame work-showcase" aria-labelledby="work-title">
     <div class="work-stage">
       <div class="section-heading">
@@ -156,7 +159,7 @@ const pages = [
           tabindex="0"
           aria-label={cs ? 'Vybrané projekty' : 'Selected projects'}
         >
-          {selected.map((project, index) => {
+          {selected.map((project) => {
             const media = projectMedia[project.name]!;
             const ratio = media.image.width / media.image.height;
             const portrait = ratio < 1;
@@ -173,7 +176,6 @@ const pages = [
                     alt={media.alt[lang]}
                     widths={portrait ? [160, 240, 320, 480] : [320, 480, 640, 960, 1200]}
                     sizes={`(max-width:40rem) min(64vw, ${24 * ratio}svh, max(${5 * ratio}rem, calc(${100 * ratio}svh - ${32 * ratio}rem)), ${14 * ratio}rem), min(70vw, ${34 * ratio}svh, max(${5 * ratio}rem, calc(${100 * ratio}svh - ${32 * ratio}rem)), ${24 * ratio}rem)`}
-                    priority={index === 0}
                   />
                   <p class="muted">{project.kind}</p>
                   <span class="work-scene__open">
