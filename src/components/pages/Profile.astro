@@ -9,6 +9,7 @@ import SocialIcon from '../../components/SocialIcon.astro';
 import ContactLink from '../ContactLink.astro';
 import ContactForm from '../ContactForm.astro';
 import { certifications } from '../../data/certifications';
+import { getExperience } from '../../data/career';
 import Base from '../../layouts/Base.astro';
 import { href as siteHref, profile } from '../../site';
 import { ui, type Lang } from '../../i18n';
@@ -152,49 +153,8 @@ const habits = cs
         text: 'I direct coding agents with scoped tasks, context, permissions and guardrails. I keep ownership of architecture and validate generated work with review, tests, CI and security checks.',
       },
     ];
-const experience = [
-  {
-    when: cs ? 'září 2021 – květen 2025' : 'Sep 2021 – May 2025',
-    role: cs ? 'Strojírenství' : 'Mechanical Engineering',
-    org: 'Střední průmyslová škola Zlín',
-    logo: schoolLogo,
-  },
-  {
-    when: cs ? 'leden 2023 – červen 2025' : 'Jan 2023 – Jun 2025',
-    role: cs ? 'Student programování v Azure' : 'Student Azure Programming',
-    org: 'Student Trainee Center (STC)',
-    logo: stcLogo,
-    support: true,
-    note: cs
-      ? 'Vybrán do IT programu podporovaného Microsoftem. Vývoj softwaru, API a cloudových projektů s mentory. Závěrečný projekt Music Analyzer: aplikace v Pythonu a Flasku využívající Librosa, Spleeter a Demucs pro rozdělení hudby na šest stop, přehrávání a ovládání jednotlivých stop.'
-      : 'Selected for a Microsoft-supported IT programme, building software, API and cloud projects with mentors. Final project: Music Analyzer, a Python/Flask app using Librosa, Spleeter and Demucs for six-stem music separation, playback and per-stem controls.',
-  },
-  {
-    when: cs ? 'červen 2025 – dosud' : 'Jun 2025 – now',
-    role: 'Full-Stack AI/ML Engineer & Backend Developer',
-    org: 'OKsystem',
-    note: cs
-      ? 'Vyvíjím LLM chatboty a RAG systémy. Pracuji s Python službami, API, databázemi a integracemi. V inovačním týmu také experimentuji s modely, jejich hodnocením a adaptací na české jazykové úlohy.'
-      : 'Build LLM chatbots and RAG systems with Python services, APIs, databases and integrations. In the innovation team I also experiment with model evaluation and adaptation for Czech-language tasks.',
-  },
-  {
-    when: cs ? 'září 2025 – dosud' : 'Sep 2025 – present',
-    role: cs ? 'Softwarové inženýrství' : 'Software Engineering',
-    org: cs ? 'Univerzita Tomáše Bati ve Zlíně' : 'Tomas Bata University in Zlín',
-    logo: utbLogo,
-    note: cs
-      ? 'Kombinované studium algoritmů, návrhu softwaru, databází, AI, sítí a vývoje webových a mobilních aplikací.'
-      : 'Combined study covering algorithms, software design, databases, AI, networks and web/mobile development.',
-  },
-  {
-    when: cs ? 'květen 2026 – říjen 2026' : 'May 2026 – Oct 2026',
-    role: cs ? 'Výzkumník bezpečnosti AI a red teamingu' : 'AI Safety & Red Teaming Researcher',
-    org: cs ? 'Na volné noze' : 'Freelance',
-    note: cs
-      ? 'Neveřejné hodnocení bezpečnosti pokročilé generativní AI pro nejmenovanou AI společnost pod NDA. Nezávislý a odpovědný výzkum zranitelností.'
-      : 'Private safety evaluations of frontier generative AI for a confidential AI company under NDA. Independent, responsible vulnerability research.',
-  },
-];
+const experience = getExperience(lang);
+const logos = { school: schoolLogo, stc: stcLogo, utb: utbLogo };
 const skills = cs
   ? [
       {
@@ -389,7 +349,7 @@ const skills = cs
                         'timeline__mark',
                         { 'timeline__mark--school': e.org === 'Střední průmyslová škola Zlín' },
                       ]}
-                      src={e.logo}
+                      src={logos[e.logo]}
                       width="40"
                       height="40"
                       densities={[1, 2, 3]}
