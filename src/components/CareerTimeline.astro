@@ -16,7 +16,7 @@ const { lang } = Astro.props;
 const cs = lang === 'cs';
 const title = cs ? 'Moje cesta v kostce' : 'My path at a glance';
 const rows = getExperience(lang);
-const logos = { school: schoolLogo, stc: stcLogo, utb: utbLogo };
+const logos = { school: schoolLogo, stc: stcLogo, utb: utbLogo, oksystem: oksystemLogo };
 const years = Array.from(
   { length: careerWindow.end - careerWindow.start + 1 },
   (_, i) => careerWindow.start + i,
@@ -40,7 +40,7 @@ const years = Array.from(
   <ol class="career__rows">
     {rows.map((row) => {
       const range = careerRange(row.start, row.end);
-      const logo = row.logo ? logos[row.logo] : row.org === 'OKsystem' ? oksystemLogo : null;
+      const logo = row.logo ? logos[row.logo] : null;
       return (
         <li
           class:list={{ 'career__row--ongoing': row.end === null }}
@@ -89,6 +89,8 @@ const years = Array.from(
   import { onPage } from '../scripts/page';
 
   onPage(() => {
+    // Native hash scrolling can happen after the first mount on a full page load.
+    if (location.hash) return;
     // Keep rows already on screen finished, including restored scroll positions.
     const pending = [...document.querySelectorAll<HTMLElement>('.career__rows > li')].filter(
       (row) => row.getBoundingClientRect().top >= innerHeight,
