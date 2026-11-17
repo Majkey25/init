@@ -108,13 +108,6 @@ const services = cs
     ];
 // Certifications and completed courses are labelled separately.
 const certificateCount = certifications.reduce((count, group) => count + group.list.length, 0);
-const certificateDate = new Intl.DateTimeFormat(lang, {
-  month: 'long',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-const formatCertificateDate = (date: string) =>
-  certificateDate.format(new Date(`${date}-01T00:00:00Z`));
 const habits = cs
   ? [
       {
@@ -465,21 +458,6 @@ const skills = cs
                     ) : (
                       certificate.name
                     )}
-                    <span class="meta">
-                      {cs ? 'Vydáno' : 'Issued'}{' '}
-                      <time datetime={certificate.issued}>
-                        {formatCertificateDate(certificate.issued)}
-                      </time>
-                      {certificate.expires && (
-                        <>
-                          {' · '}
-                          {cs ? 'platnost do' : 'expires'}{' '}
-                          <time datetime={certificate.expires}>
-                            {formatCertificateDate(certificate.expires)}
-                          </time>
-                        </>
-                      )}
-                    </span>
                   </li>
                 ))}
               </ul>
@@ -859,11 +837,6 @@ const skills = cs
     display: grid;
     gap: 0.8rem;
     line-height: 1.35;
-  }
-
-  .certs li > .meta {
-    display: block;
-    margin-top: 0.2rem;
   }
 
   @media (width < 34rem) {
