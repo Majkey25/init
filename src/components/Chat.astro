@@ -1908,9 +1908,11 @@ const runtime = cs
     font-size: 0.8125rem;
   }
 
-  .msg__sources li {
-    animation: rise 300ms var(--ease-out) both;
-    animation-delay: calc(var(--i) * 45ms);
+  @media (prefers-reduced-motion: no-preference) {
+    .msg__sources li {
+      animation: rise 300ms var(--ease-out) both;
+      animation-delay: calc(var(--i) * 45ms);
+    }
   }
 
   .msg__sources a,
